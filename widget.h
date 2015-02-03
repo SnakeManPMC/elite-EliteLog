@@ -22,13 +22,16 @@ private:
 	void scanDirectoryLogs();
 	void parseLog(QString elite_path);
 	void writeCmdrLog();
+	void checkUniqueSystem(QString MySystem);
+	void updateSystemsVisited();
 	QString timeUTCtoString();
 	QString extractSystemName(QString line);
 	QString MySystem,CurrentLogName;
+	QStringList uniqueSystems;
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers;
+	int savedHammers,numSessionSystems;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 
 protected:

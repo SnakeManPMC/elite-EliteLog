@@ -29,6 +29,7 @@ Widget::Widget(QWidget *parent) :
 
 	savedHammers = 0;
 	filePos = 0;
+	numSessionSystems = 0;
 
 	// at start we read our log and latest / current Star System
 	readCmdrLog();
@@ -176,10 +177,15 @@ void Widget::readCmdrLog()
 		line = in.readLine();
 		tempsystem = line.split(",");
 		MySystem = tempsystem[0];
+
+		checkUniqueSystem(MySystem);
 	}
 	// close right away, this eventually is not what we want
 	CmdrLog.close();
-	ui->textEdit->append("Your current system: " + MySystem);
+
+	updateSystemsVisited();
+	// basic info for our text edit
+	ui->textEdit->append("Your current system: " + MySystem + ". You've visited " + QString::number(uniqueSystems.count()) + " unique systems.");
 }
 
 
@@ -220,6 +226,13 @@ void Widget::timerEvent(QTimerEvent *event)
 	{
 		writeCmdrLog();
 		ui->textEdit->append(MySystem + ", " + timeUTCtoString());
+		// add one new system visited counter
+		numSessionSystems++;
+
+		// check unique system
+		checkUniqueSystem(MySystem);
+		// update systems visited label
+		updateSystemsVisited();
 	}
 }
 
@@ -270,4 +283,20 @@ bool Widget::fileChangedOrNot(QString elite_file)
 		savedHammers++;
 		return false;
 	}
+}
+
+
+// check for unique never before visited system, if it is, add it to the list
+void Widget::checkUniqueSystem(QString MySystem)
+{
+	if (!uniqueSystems.contains(MySystem)) uniqueSystems.push_back(MySystem);
+}
+
+
+// updates the Label on UI for unique systems visited
+void Widget::updateSystemsVisited()
+{
+	// update label which shows number of unique systems
+	ui->SystemsVisited->setText("Systems Visited: " + QString::number(uniqueSystems.count()));
+	ui->SessionSystemVisits->setText("Session System Visits " + QString::number(numSessionSystems));
 }
