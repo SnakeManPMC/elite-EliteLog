@@ -31,6 +31,11 @@ Widget::Widget(QWidget *parent) :
 	filePos = 0;
 	numSessionSystems = 0;
 
+	getLogDirectory();
+
+	// kind of debug thing, but still
+	ui->textEdit->append("Log directory: " + logDirectory + "\\Logs");
+
 	// at start we read our log and latest / current Star System
 	readCmdrLog();
 	// then scan log directory for existing logs, extract system name which should be
@@ -59,10 +64,30 @@ Widget::~Widget()
 }
 
 
+void Widget::getLogDirectory()
+{
+	QFile file("EliteLog.cfg");
+
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file"),
+		file.errorString());
+		return;
+	}
+
+	QTextStream in(&file);
+
+	logDirectory = in.readLine();
+	file.close();
+}
+
+
 // reads contents of LOG directory, checks the newest file
+// if path or log file is not correct, it gives some index out of bounds error?
 void Widget::scanDirectoryLogs()
 {
-	QString elite_path = "C:\\Users\\PMCBitch\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1001\\Logs";
+	//"C:\\Users\\PMCBitch\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1001\\Logs";
+	QString elite_path = logDirectory + "\\Logs";
 	//QString elite_path = "D:\\coding\\Test_files\\Elite_Logs";
 	QStringList nameFilter("netLog.*.log");
 	QDir directory(elite_path);

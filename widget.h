@@ -24,6 +24,7 @@ private:
 	void writeCmdrLog();
 	void checkUniqueSystem(QString MySystem);
 	void updateSystemsVisited();
+	void getLogDirectory();
 	QString timeUTCtoString();
 	QString extractSystemName(QString line);
 	QString MySystem,CurrentLogName;
@@ -33,6 +34,7 @@ private:
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
+	QString logDirectory;
 
 protected:
 	void timerEvent(QTimerEvent *event);
