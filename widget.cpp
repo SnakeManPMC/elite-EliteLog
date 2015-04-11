@@ -82,10 +82,34 @@ void Widget::getLogDirectory()
 	QTextStream in(&file);
 
 	logDirectory = in.readLine();
+	QString tmp = in.readLine();
+	bool ok;
+	numSessionSystemsRecord = tmp.toInt(&ok, 10);
 	//ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
 	file.close();
 }
 
+
+void Widget::saveEliteCFG()
+{
+	QFile file("EliteLog.cfg");
+
+	if (!file.open(QIODevice::WriteOnly))
+	{
+		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file"),
+		file.errorString());
+		return;
+	}
+
+	QTextStream out(&file);
+
+	out << logDirectory;
+	out << "\n";
+	out << numSessionSystemsRecord;
+	out << "\n";
+
+	file.close();
+}
 
 // reads contents of LOG directory, checks the newest file
 // if path or log file is not correct, it gives some index out of bounds error?
@@ -262,8 +286,17 @@ void Widget::timerEvent(QTimerEvent *event)
 	{
 		writeCmdrLog();
 		ui->textEdit->append(MySystem + ", " + timeUTCtoString());
+
 		// add one new system visited counter
 		numSessionSystems++;
+		// check for new high score
+		if (numSessionSystemsRecord < numSessionSystems)
+		{
+			// increment this record
+			numSessionSystemsRecord = numSessionSystems;
+			// then save it to file, ouch, lot of saving in long gaming session huh?
+			saveEliteCFG();
+		}
 
 		// check unique system
 		checkUniqueSystem(MySystem);
@@ -333,6 +366,6 @@ void Widget::checkUniqueSystem(QString MySystem)
 void Widget::updateSystemsVisited()
 {
 	// update label which shows number of unique systems
-	ui->SystemsVisited->setText("Systems Visited: " + QString::number(uniqueSystems.count()));
-	ui->SessionSystemVisits->setText("Session System Visits " + QString::number(numSessionSystems));
+	ui->SystemsVisited->setText("Unique Systems Visited: " + QString::number(uniqueSystems.count()));
+	ui->SessionSystemVisits->setText("Session System Visits: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord));
 }

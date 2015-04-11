@@ -25,6 +25,7 @@ private:
 	void checkUniqueSystem(QString MySystem);
 	void updateSystemsVisited();
 	void getLogDirectory();
+	void saveEliteCFG();
 	QString timeUTCtoString();
 	QString extractSystemName(QString line);
 	QString MySystem,CurrentLogName;
@@ -32,7 +33,7 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory;
 
