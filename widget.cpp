@@ -18,6 +18,7 @@ QDateTime created = fileInfo.lastModified();
 
 #include "widget.h"
 #include "ui_widget.h"
+#include "fileops.h"
 
 #include <QtWidgets>
 
@@ -32,6 +33,9 @@ Widget::Widget(QWidget *parent) :
 	numSessionSystems = 0;
 
 	getLogDirectory();
+
+	// AppConfig.xml reading and adding VerboseLogging if its missing.
+	FileOps fo(logDirectory);
 
 	// kind of debug thing, but still
 	ui->textEdit->append("Log directory: " + logDirectory + "\\Logs");
@@ -78,6 +82,7 @@ void Widget::getLogDirectory()
 	QTextStream in(&file);
 
 	logDirectory = in.readLine();
+	//ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
 	file.close();
 }
 
@@ -93,6 +98,12 @@ void Widget::scanDirectoryLogs()
 	QDir directory(elite_path);
 	QStringList txtFilesAndDirectories = directory.entryList(nameFilter, QDir::NoFilter, QDir::Time);
 
+	if (txtFilesAndDirectories.count() == 0)
+	{
+		// exit
+		ui->textEdit->append("Directory listed in EliteLog.cfg does not exist, please check the config.");
+		return;
+	}
 	//ui->textEdit->append("Last created/modified(?) .log filename: " + txtFilesAndDirectories[0]);
 
 	//QString fullFilePath = elite_path + "\\" + txtFilesAndDirectories[0];
