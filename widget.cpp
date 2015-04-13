@@ -190,6 +190,7 @@ void Widget::parseLog(QString elite_path)
 		// found FindBestIsland, which is same as station name
 		if (line.contains("FindBestIsland"))
 		{
+			qDebug() << "Going into FindBEstIsland";
 			MyStation = extractStationName(line);
 			// set station label
 			ui->StationName->setText(MyStation);
@@ -207,13 +208,14 @@ void Widget::parseLog(QString elite_path)
 // extracts the actual star system name from last system: entry
 QString Widget::extractSystemName(QString line)
 {
+	QString tmpSystemName = MySystem;
 	// regexp reads "<ANYTHING>System:<ANY_NUMBER_OF_DIGITS>(" for match
 	QStringList parsed = line.split(QRegExp("(.*)System:?\\d+\\("));
 	QStringList finale = parsed[1].split(") Body:");
 
 	// check if we ignore Training system (playing in training missions) of not
 	if ((finale[0] == "Training") && (ui->IgnoreTraining->isChecked()))
-		return MySystem;
+		return tmpSystemName;
 	else
 		return finale[0];
 }
@@ -223,9 +225,12 @@ QString Widget::extractStationName(QString line)
 {
 //{03:42:26} FindBestIsland:Snake Man:all:Zholobov Enterprise:LTT 15278
 	QStringList parsed = line.split(":");
-	QString final = parsed[6];
+	qDebug() << "parsed[0]: " << parsed[0] << ", [1]: " << parsed[1] << ", [2]: " << parsed[2] << ", [3]: " << parsed[3] << ", [4]: " << parsed[4]
+		 << ", [5]: " << parsed[5] << ", [6]: " << parsed[6];
+	//<< ", [7]: " << parsed[7] << ", [8]: " << parsed[8];
+	QString final = parsed[5];
 	// if we are NOT in station, if the name is just system name, we make it "-"
-	if (parsed[6].contains(parsed[7])) final = "-";
+	if (parsed[5].contains(parsed[6])) final = "-";
 	return final;
 }
 
