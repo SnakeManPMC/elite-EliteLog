@@ -28,7 +28,8 @@ private:
 	void saveEliteCFG();
 	QString timeUTCtoString();
 	QString extractSystemName(QString line);
-	QString MySystem,CurrentLogName;
+	QString extractStationName(QString line);
+	QString MySystem,MyStation,CurrentLogName;
 	QStringList uniqueSystems;
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);

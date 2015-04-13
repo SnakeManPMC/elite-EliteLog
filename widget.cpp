@@ -186,6 +186,14 @@ void Widget::parseLog(QString elite_path)
 			MySystem = extractSystemName(line);
 			//ui->textEdit->append(MySystem);
 		}
+
+		// found FindBestIsland, which is same as station name
+		if (line.contains("FindBestIsland"))
+		{
+			MyStation = extractStationName(line);
+			// set station label
+			ui->StationName->setText(MyStation);
+		}
 	}
 	// mark the position our file
 	filePos = file.pos();
@@ -202,7 +210,23 @@ QString Widget::extractSystemName(QString line)
 	// regexp reads "<ANYTHING>System:<ANY_NUMBER_OF_DIGITS>(" for match
 	QStringList parsed = line.split(QRegExp("(.*)System:?\\d+\\("));
 	QStringList finale = parsed[1].split(") Body:");
-	return finale[0];
+
+	// check if we ignore Training system (playing in training missions) of not
+	if ((finale[0] == "Training") && (ui->IgnoreTraining->isChecked()))
+		return MySystem;
+	else
+		return finale[0];
+}
+
+
+QString Widget::extractStationName(QString line)
+{
+//{03:42:26} FindBestIsland:Snake Man:all:Zholobov Enterprise:LTT 15278
+	QStringList parsed = line.split(":");
+	QString final = parsed[6];
+	// if we are NOT in station, if the name is just system name, we make it "-"
+	if (parsed[6].contains(parsed[7])) final = "-";
+	return final;
 }
 
 

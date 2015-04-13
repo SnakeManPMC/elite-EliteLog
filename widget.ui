@@ -29,6 +29,26 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="StationName">
+     <property name="text">
+      <string>Station: -</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="IgnoreTraining">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Ignore Training System</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QTextEdit" name="textEdit"/>
    </item>
    <item>
