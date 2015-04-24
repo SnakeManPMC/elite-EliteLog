@@ -28,6 +28,10 @@ Widget::Widget(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	// our softwares version
+	eliteLogVersion = "v1.0";
+	setWindowTitle("Elite Log PMC " + eliteLogVersion);
+
 	savedHammers = 0;
 	filePos = 0;
 	numSessionSystems = 0;
@@ -188,12 +192,12 @@ void Widget::parseLog(QString elite_path)
 		}
 
 		// found FindBestIsland, which is same as station name
-		if (line.contains("FindBestIsland"))
+		if (line.contains("} FindBestIsland:"))
 		{
-			qDebug() << "Going into FindBEstIsland";
+			//qDebug() << "Going into FindBEstIsland";
 			MyStation = extractStationName(line);
 			// set station label
-			ui->StationName->setText(MyStation);
+			ui->StationName->setText("Station: " + MyStation);
 		}
 	}
 	// mark the position our file
@@ -214,7 +218,7 @@ QString Widget::extractSystemName(QString line)
 	QStringList finale = parsed[1].split(") Body:");
 
 	// check if we ignore Training system (playing in training missions) of not
-	if ((finale[0] == "Training") && (ui->IgnoreTraining->isChecked()))
+	if ((finale[0] == "Training" || finale[0] == "Destination") && (ui->IgnoreTraining->isChecked()))
 		return tmpSystemName;
 	else
 		return finale[0];
@@ -224,13 +228,16 @@ QString Widget::extractSystemName(QString line)
 QString Widget::extractStationName(QString line)
 {
 //{03:42:26} FindBestIsland:Snake Man:all:Zholobov Enterprise:LTT 15278
+	//qDebug() << "line is: " << line;
+	QString final;
 	QStringList parsed = line.split(":");
-	qDebug() << "parsed[0]: " << parsed[0] << ", [1]: " << parsed[1] << ", [2]: " << parsed[2] << ", [3]: " << parsed[3] << ", [4]: " << parsed[4]
-		 << ", [5]: " << parsed[5] << ", [6]: " << parsed[6];
+	//qDebug() << "parsed[0]: " << parsed[0] << "[1]: " << parsed[1] << "[2]: " << parsed[2] << "[3]: " << parsed[3] << "[4]: " << parsed[4] << "[5]: " << parsed[5] << "[6]: " << parsed[6];
 	//<< ", [7]: " << parsed[7] << ", [8]: " << parsed[8];
-	QString final = parsed[5];
 	// if we are NOT in station, if the name is just system name, we make it "-"
-	if (parsed[5].contains(parsed[6])) final = "-";
+	if (parsed[5].contains(parsed[6]))
+		final = "Station: -";
+	else
+		final = parsed[5];
 	return final;
 }
 
@@ -316,6 +323,9 @@ void Widget::timerEvent(QTimerEvent *event)
 		writeCmdrLog();
 		ui->textEdit->append(MySystem + ", " + timeUTCtoString());
 
+		// if we automatically clipboard system name
+		if (ui->SysNamAutoClipboard->isChecked()) on_pushButton_clicked();
+
 		// add one new system visited counter
 		numSessionSystems++;
 		// check for new high score
@@ -340,6 +350,24 @@ void Widget::on_pushButton_clicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(MySystem);
+}
+
+
+// copy station name to clipboard
+void Widget::on_pushButton_2_clicked()
+{
+	// station to clipboard
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(MyStation);
+}
+
+
+// utc timestamp to clipboard
+void Widget::on_pushButton_3_clicked()
+{
+	// station to clipboard
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(timeUTCtoString());
 }
 
 

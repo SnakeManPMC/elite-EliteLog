@@ -37,11 +37,14 @@ private:
 	int savedHammers,numSessionSystems,numSessionSystemsRecord;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory;
+	QString eliteLogVersion;
 
 protected:
 	void timerEvent(QTimerEvent *event);
 private slots:
 	void on_pushButton_clicked();
+	void on_pushButton_2_clicked();
+	void on_pushButton_3_clicked();
 };
 
 #endif // WIDGET_H
