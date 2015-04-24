@@ -80,7 +80,7 @@ void FileOps::lineByLine(QString LogDirectory)
 // this is just testing some code, not working or anything...
 void FileOps::parseXML()
 {
-	QFile* file = new QFile("d:\\coding\\test_files\\AppConfig.xml");
+	QFile* file = new QFile("d:\\coding\\test_files\\EliteGameDirSim\\AppConfig.xml");
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		qDebug() << "Error opening XML file!";
@@ -135,7 +135,7 @@ void FileOps::parseXML()
 // this is just testing some code, not working or anything...
 void FileOps::ReadXMLFile()
 {
-	QFile file("d:\\coding\\test_files\\AppConfig.xml");
+	QFile file("d:\\coding\\test_files\\EliteGameDirSim\\AppConfig.xml");
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
