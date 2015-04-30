@@ -29,7 +29,7 @@ Widget::Widget(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0";
+	eliteLogVersion = "v1.0.1";
 	setWindowTitle("Elite Log PMC " + eliteLogVersion);
 
 	savedHammers = 0;
@@ -235,7 +235,7 @@ QString Widget::extractStationName(QString line)
 	//<< ", [7]: " << parsed[7] << ", [8]: " << parsed[8];
 	// if we are NOT in station, if the name is just system name, we make it "-"
 	if (parsed[5].contains(parsed[6]))
-		final = "Station: -";
+		final = "-";
 	else
 		final = parsed[5];
 	return final;
