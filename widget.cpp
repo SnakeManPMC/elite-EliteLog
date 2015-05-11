@@ -29,12 +29,14 @@ Widget::Widget(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0.1";
-	setWindowTitle("Elite Log PMC " + eliteLogVersion);
+	eliteLogVersion = "v1.0.2";
+	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
 	filePos = 0;
 	numSessionSystems = 0;
+	numAllSystems = 0;
+	cmdrLogFileName = "EliteLog.log";
 
 	getLogDirectory();
 
@@ -115,6 +117,7 @@ void Widget::saveEliteCFG()
 	file.close();
 }
 
+
 // reads contents of LOG directory, checks the newest file
 // if path or log file is not correct, it gives some index out of bounds error?
 void Widget::scanDirectoryLogs()
@@ -159,7 +162,6 @@ void Widget::scanDirectoryLogs()
 void Widget::parseLog(QString elite_path)
 {
 	//ui->textEdit->append("Trying to open path+filename of: " + elite_path);
-
 	QFile file(elite_path);
 
 	if (!file.open(QIODevice::ReadOnly))
@@ -217,7 +219,7 @@ QString Widget::extractSystemName(QString line)
 	QStringList parsed = line.split(QRegExp("(.*)System:?\\d+\\("));
 	QStringList finale = parsed[1].split(") Body:");
 
-	// check if we ignore Training system (playing in training missions) of not
+	// check if we ignore Training system (playing in training missions)
 	if ((finale[0] == "Training" || finale[0] == "Destination") && (ui->IgnoreTraining->isChecked()))
 		return tmpSystemName;
 	else
@@ -252,15 +254,15 @@ QString Widget::timeUTCtoString()
 }
 
 
-// at program start read cmdr.log for our last Star System we were in
+// at program start read LOG for our last Star System we were in
 void Widget::readCmdrLog()
 {
-	QFile CmdrLog("Cmdr.log");
+	QFile CmdrLog(cmdrLogFileName);
 
 	if (!CmdrLog.open(QIODevice::ReadOnly))
 	{
-		QMessageBox::information(this, tr("Unable to open Cmdr.log file for reading"),
-		CmdrLog.errorString().append("\n\nUnable to open Cmdr.log text file for reading, something is wrong, dude..."));
+		QMessageBox::information(this, tr("Unable to open LOG file for reading"),
+		CmdrLog.errorString().append("\n\nUnable to open LOG text file for reading, something is wrong, dude..."));
 		return;
 	}
 
@@ -274,6 +276,7 @@ void Widget::readCmdrLog()
 		tempsystem = line.split(",");
 		MySystem = tempsystem[0];
 
+		numAllSystems++;
 		checkUniqueSystem(MySystem);
 	}
 	// close right away, this eventually is not what we want
@@ -285,14 +288,14 @@ void Widget::readCmdrLog()
 }
 
 
-// write new Star System name and UTC time string into cmdr.log file
+// write new Star System name and UTC time string into LOG file
 void Widget::writeCmdrLog()
 {
-	QFile CmdrLog("Cmdr.log");
+	QFile CmdrLog(cmdrLogFileName);
 
 	if (!CmdrLog.open(QIODevice::Append))
 	{
-		QMessageBox::information(this, tr("Unable to open Cmdr.log file for writing"),
+		QMessageBox::information(this, tr("Unable to open LOG file for writing"),
 		CmdrLog.errorString());
 		return;
 	}
@@ -315,7 +318,7 @@ void Widget::timerEvent(QTimerEvent *event)
 	else
 	{
 		writeCmdrLog();
-		ui->textEdit->append("Wrote our current system + time into Cmdr.log file!");
+		ui->textEdit->append("Wrote our current system + time into LOG file!");
 	}
 */
 	if (oldsystem.compare(MySystem))
@@ -328,6 +331,7 @@ void Widget::timerEvent(QTimerEvent *event)
 
 		// add one new system visited counter
 		numSessionSystems++;
+		numAllSystems++;
 		// check for new high score
 		if (numSessionSystemsRecord < numSessionSystems)
 		{
@@ -423,6 +427,7 @@ void Widget::checkUniqueSystem(QString MySystem)
 void Widget::updateSystemsVisited()
 {
 	// update label which shows number of unique systems
-	ui->SystemsVisited->setText("Unique Systems Visited: " + QString::number(uniqueSystems.count()));
-	ui->SessionSystemVisits->setText("Session System Visits: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord));
+	ui->SystemsVisited->setText("Unique Systems: " + QString::number(uniqueSystems.count()));
+	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord));
+	ui->totalSystemsVisited->setText("Total Systems: " + QString::number(numAllSystems));
 }

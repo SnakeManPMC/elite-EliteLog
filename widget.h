@@ -34,10 +34,11 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory;
 	QString eliteLogVersion;
+	QString cmdrLogFileName;
 
 protected:
 	void timerEvent(QTimerEvent *event);
