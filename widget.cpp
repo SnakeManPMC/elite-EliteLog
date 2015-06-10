@@ -1,6 +1,6 @@
 /*
 directory:
-C:\Users\PMCBitch\AppData\Local\Frontier_Developments\Products\FORC-FDEV-D-1001\Logs
+C:\Users\<username>\AppData\Local\Frontier_Developments\Products\FORC-FDEV-D-1001\Logs
 
 file name:
 netLog.1412190357.01.log
@@ -122,7 +122,7 @@ void Widget::saveEliteCFG()
 // if path or log file is not correct, it gives some index out of bounds error?
 void Widget::scanDirectoryLogs()
 {
-	//"C:\\Users\\PMCBitch\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1001\\Logs";
+	//"C:\\Users\\<username>\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1001\\Logs";
 	QString elite_path = logDirectory + "\\Logs";
 	//QString elite_path = "D:\\coding\\Test_files\\Elite_Logs";
 	QStringList nameFilter("netLog.*.log");

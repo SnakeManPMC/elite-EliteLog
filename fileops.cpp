@@ -20,7 +20,7 @@ FileOps::~FileOps()
 
 void FileOps::lineByLine(QString LogDirectory)
 {
-	QFile file (LogDirectory + "\\AppConfig.xml");
+	QFile file (LogDirectory + "//AppConfig.xml");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		qDebug() << "Error opening XML file!";
@@ -58,7 +58,7 @@ void FileOps::lineByLine(QString LogDirectory)
 	// we reached here so it means verboselogging was not found, but lets check anyways hehe.
 	if (!VerboseLogging)
 	{
-		QFile fout (LogDirectory + "\\AppConfig.xml");
+		QFile fout (LogDirectory + "//AppConfig.xml");
 		if (!fout.open(QIODevice::WriteOnly | QIODevice::Text))
 		{
 			qDebug() << "Error creating new XML file!";
@@ -80,7 +80,7 @@ void FileOps::lineByLine(QString LogDirectory)
 // this is just testing some code, not working or anything...
 void FileOps::parseXML()
 {
-	QFile* file = new QFile("d:\\coding\\test_files\\EliteGameDirSim\\AppConfig.xml");
+	QFile* file = new QFile("d://elite.dangerous//EliteGameDirSim//AppConfig.xml");
 	if (!file->open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		qDebug() << "Error opening XML file!";
@@ -135,7 +135,7 @@ void FileOps::parseXML()
 // this is just testing some code, not working or anything...
 void FileOps::ReadXMLFile()
 {
-	QFile file("d:\\coding\\test_files\\EliteGameDirSim\\AppConfig.xml");
+	QFile file("d://elite.dangerous//EliteGameDirSim//AppConfig.xml");
 
 	if (!file.open(QIODevice::ReadOnly))
 	{
