@@ -84,7 +84,6 @@ void Widget::getLogDirectory()
 	{
 		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file for reading"),
 		file.errorString().append("\n\nUnable to open EliteLog.cfg file for reading, something is wrong, dude!\n\nExiting program..."));
-		// close program!
 		exit(1);
 	}
 
@@ -125,9 +124,7 @@ void Widget::saveEliteCFG()
 // if path or log file is not correct, it gives some index out of bounds error?
 void Widget::scanDirectoryLogs()
 {
-	//"C:\\Users\\<username>\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1001\\Logs";
 	QString elite_path = logDirectory + "\\Logs";
-	//QString elite_path = "D:\\coding\\Test_files\\Elite_Logs";
 	QStringList nameFilter("netLog.*.log");
 	QDir directory(elite_path);
 	QStringList txtFilesAndDirectories = directory.entryList(nameFilter, QDir::NoFilter, QDir::Time);
@@ -136,7 +133,7 @@ void Widget::scanDirectoryLogs()
 	{
 		// exit
 		ui->textEdit->append("Directory listed in EliteLog.cfg does not exist, please check the config.");
-		return;
+		exit(1);
 	}
 	//ui->textEdit->append("Last created/modified(?) .log filename: " + txtFilesAndDirectories[0]);
 
@@ -232,12 +229,8 @@ QString Widget::extractSystemName(QString line)
 
 QString Widget::extractStationName(QString line)
 {
-//{03:42:26} FindBestIsland:Snake Man:all:Zholobov Enterprise:LTT 15278
-	//qDebug() << "line is: " << line;
 	QString final;
 	QStringList parsed = line.split(":");
-	//qDebug() << "parsed[0]: " << parsed[0] << "[1]: " << parsed[1] << "[2]: " << parsed[2] << "[3]: " << parsed[3] << "[4]: " << parsed[4] << "[5]: " << parsed[5] << "[6]: " << parsed[6];
-	//<< ", [7]: " << parsed[7] << ", [8]: " << parsed[8];
 	// if we are NOT in station, if the name is just system name, we make it "-"
 	if (parsed[5].contains(parsed[6]))
 		final = "-";
@@ -264,9 +257,9 @@ void Widget::readCmdrLog()
 
 	if (!CmdrLog.open(QIODevice::ReadOnly))
 	{
-		QMessageBox::information(this, tr("Unable to open LOG file for reading"),
-		CmdrLog.errorString().append("\n\nUnable to open LOG text file for reading, something is wrong, dude..."));
-		return;
+		QMessageBox::information(this, tr("Unable to open your personal LOG file for reading"),
+		CmdrLog.errorString().append("\n\nUnable to open your personal LOG text file for reading, something is wrong, dude..."));
+		exit(1);
 	}
 
 	QString line;
