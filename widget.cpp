@@ -95,8 +95,6 @@ void Widget::getLogDirectory()
 	bool ok;
 	numSessionSystemsRecord = parsed[0].toInt(&ok, 10);
 	numSessionSystemsRecordDate = parsed[1];
-	qDebug() << "numSessionSystemsRecord int: " << numSessionSystemsRecord;
-	qDebug() << "numSessionSystemsRecordDate: " << numSessionSystemsRecordDate;
 	//ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
 	file.close();
 }
@@ -118,6 +116,7 @@ void Widget::saveEliteCFG()
 	out << logDirectory;
 	out << "\n";
 	out << numSessionSystemsRecord;
+	out << ",";
 	out << numSessionSystemsRecordDate;
 	out << "\n";
 
