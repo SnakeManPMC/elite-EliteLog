@@ -36,9 +36,7 @@ private:
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
-	QString logDirectory;
-	QString eliteLogVersion;
-	QString cmdrLogFileName;
+	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
 protected:
 	void timerEvent(QTimerEvent *event);

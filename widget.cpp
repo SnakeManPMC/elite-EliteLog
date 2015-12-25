@@ -91,8 +91,12 @@ void Widget::getLogDirectory()
 
 	logDirectory = in.readLine();
 	QString tmp = in.readLine();
+	QStringList parsed = tmp.split(",");
 	bool ok;
-	numSessionSystemsRecord = tmp.toInt(&ok, 10);
+	numSessionSystemsRecord = parsed[0].toInt(&ok, 10);
+	numSessionSystemsRecordDate = parsed[1];
+	qDebug() << "numSessionSystemsRecord int: " << numSessionSystemsRecord;
+	qDebug() << "numSessionSystemsRecordDate: " << numSessionSystemsRecordDate;
 	//ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
 	file.close();
 }
@@ -104,7 +108,7 @@ void Widget::saveEliteCFG()
 
 	if (!file.open(QIODevice::WriteOnly))
 	{
-		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file"),
+		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file for saving!"),
 		file.errorString());
 		return;
 	}
@@ -114,6 +118,7 @@ void Widget::saveEliteCFG()
 	out << logDirectory;
 	out << "\n";
 	out << numSessionSystemsRecord;
+	out << numSessionSystemsRecordDate;
 	out << "\n";
 
 	file.close();
@@ -333,6 +338,7 @@ void Widget::timerEvent(QTimerEvent *event)
 		{
 			// increment this record
 			numSessionSystemsRecord = numSessionSystems;
+			numSessionSystemsRecordDate = timeUTCtoString();
 			// then save it to file, ouch, lot of saving in long gaming session huh?
 			saveEliteCFG();
 		}
@@ -424,6 +430,7 @@ void Widget::updateSystemsVisited()
 {
 	// update label which shows number of unique systems
 	ui->SystemsVisited->setText("Unique Systems: " + QString::number(uniqueSystems.count()));
-	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord));
+	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord)
+					 + " at " + numSessionSystemsRecordDate);
 	ui->totalSystemsVisited->setText("Total Systems: " + QString::number(numAllSystems));
 }
