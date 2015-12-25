@@ -29,7 +29,7 @@ Widget::Widget(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0.2";
+	eliteLogVersion = "v1.0.3";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;

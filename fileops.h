@@ -13,7 +13,8 @@ public:
 private:
 	void ReadXMLFile();
 	void parseXML();
-	void lineByLine(QString LogDirectory);
+	void AppConfigLocal(QString LogDirectory, QString ConfigName);
+	bool fileExists(QString path);
 	bool VerboseLogging;
 };
 

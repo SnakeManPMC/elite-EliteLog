@@ -4,12 +4,20 @@
 #include <QXmlStreamReader>
 #include <QMessageBox>
 #include <QDebug>
+#include <QFileInfo>
 
 FileOps::FileOps(QString LogDirectory)
 {
 	// initialize Verboselogging bool to false at start
 	VerboseLogging = false;
-	lineByLine(LogDirectory);
+	if (fileExists(LogDirectory + "//AppConfigLocal.xml"))
+	{
+		AppConfigLocal(LogDirectory, "//AppConfigLocal.xml");
+	}
+	else
+	{
+		AppConfigLocal(LogDirectory, "//AppConfig.xml");
+	}
 }
 
 FileOps::~FileOps()
@@ -17,18 +25,18 @@ FileOps::~FileOps()
 
 }
 
+
 // check for verboselogging by reading XML line by line :)
-void FileOps::lineByLine(QString LogDirectory)
+void FileOps::AppConfigLocal(QString LogDirectory, QString ConfigName)
 {
-	QFile file (LogDirectory + "//AppConfig.xml");
+	QFile file (LogDirectory + ConfigName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		QMessageBox msgBox;
-		msgBox.setText("Could not open AppConfig.xml file\n\nCannot proceed, exiting...");
+		msgBox.setText("Could not open " + ConfigName + " file\n\nCannot proceed, exiting...");
 		msgBox.exec();
 		exit(1);
 	}
-
 	// create buffer, read full XML file there, close file
 	QString buffer,line;
 	QTextStream in(&file);
@@ -58,11 +66,11 @@ void FileOps::lineByLine(QString LogDirectory)
 	// we reached here so it means verboselogging was not found, but lets check anyways hehe.
 	if (!VerboseLogging)
 	{
-		QFile fout (LogDirectory + "//AppConfig.xml");
+		QFile fout (LogDirectory + "//AppConfigLocal.xml");
 		if (!fout.open(QIODevice::WriteOnly | QIODevice::Text))
 		{
 			QMessageBox msgBox;
-			msgBox.setText("Error while creating a NEW AppConfig.xml file (this should not happen, heh)\n\nCannot proceed, exiting...");
+			msgBox.setText("Error while creating a NEW AppConfigLocal.xml file (this should not happen, heh)\n\nCannot proceed, exiting...");
 			msgBox.exec();
 			exit(1);
 		}
@@ -78,8 +86,24 @@ void FileOps::lineByLine(QString LogDirectory)
 
 		// informative message to user that hes AppConfig.xml has been edited
 		QMessageBox msgBox;
-		msgBox.setText("AppConfig.xml did not include VerboseLogging, so it was added. All good.");
+		msgBox.setText(ConfigName + " did not include VerboseLogging, so it was added and\nAppConfigLocal.xml file created. All good."
+			       "\n\nRemember to restart your Elite Launcher for verboselogging to take affect.");
 		msgBox.exec();
+	}
+}
+
+
+bool FileOps::fileExists(QString path)
+{
+	QFileInfo checkFile(path);
+	// check if file exists and if yes: Is it really a file and no directory?
+	if (checkFile.exists() && checkFile.isFile())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
