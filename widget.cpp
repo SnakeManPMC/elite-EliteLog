@@ -78,11 +78,14 @@ void Widget::getLogDirectory()
 {
 	QFile file("EliteLog.cfg");
 
+	// exit program if this file is not found, as we cannot really
+	// proceed without the config info
 	if (!file.open(QIODevice::ReadOnly))
 	{
-		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file"),
-		file.errorString());
-		return;
+		QMessageBox::information(this, tr("Unable to open EliteLog.cfg file for reading"),
+		file.errorString().append("\n\nUnable to open EliteLog.cfg file for reading, something is wrong, dude!\n\nExiting program..."));
+		// close program!
+		exit(1);
 	}
 
 	QTextStream in(&file);
