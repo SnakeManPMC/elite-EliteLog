@@ -75,6 +75,11 @@ void FileOps::lineByLine(QString LogDirectory)
 
 		// dunno why but lets set verboselogging on
 		VerboseLogging = true;
+
+		// informative message to user that hes AppConfig.xml has been edited
+		QMessageBox msgBox;
+		msgBox.setText("AppConfig.xml did not include VerboseLogging, so it was added. All good.");
+		msgBox.exec();
 	}
 }
 
