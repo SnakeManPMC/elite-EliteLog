@@ -17,14 +17,16 @@ FileOps::~FileOps()
 
 }
 
-
+// check for verboselogging by reading XML line by line :)
 void FileOps::lineByLine(QString LogDirectory)
 {
 	QFile file (LogDirectory + "//AppConfig.xml");
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		qDebug() << "Error opening XML file!";
-		return;
+		QMessageBox msgBox;
+		msgBox.setText("Could not open AppConfig.xml file\n\nCannot proceed, exiting...");
+		msgBox.exec();
+		exit(1);
 	}
 
 	// create buffer, read full XML file there, close file
@@ -39,7 +41,6 @@ void FileOps::lineByLine(QString LogDirectory)
 		if (line.contains("Verboselogging"))
 		{
 			VerboseLogging = true;
-			//qDebug() << "Verboselogging was found, exiting...";
 			return;
 		}
 		// if we encounter end of network xml (no verboselogging found), lets write verbose!
@@ -49,7 +50,6 @@ void FileOps::lineByLine(QString LogDirectory)
 			buffer.chop(2);
 			// write our line PLUS the chopped > character
 			buffer.append("\tVerboselogging=\"1\"\n\t>\n");
-			//qDebug() << "Successfully added VerboseLogging, whee!";
 		}
 		buffer.append(line + "\n");
 	}
@@ -61,8 +61,10 @@ void FileOps::lineByLine(QString LogDirectory)
 		QFile fout (LogDirectory + "//AppConfig.xml");
 		if (!fout.open(QIODevice::WriteOnly | QIODevice::Text))
 		{
-			qDebug() << "Error creating new XML file!";
-			return;
+			QMessageBox msgBox;
+			msgBox.setText("Error while creating a NEW AppConfig.xml file (this should not happen, heh)\n\nCannot proceed, exiting...");
+			msgBox.exec();
+			exit(1);
 		}
 
 		// create buffer, read full XML file there, close file
