@@ -29,7 +29,7 @@ Widget::Widget(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0.3";
+	eliteLogVersion = "v1.0.4";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -220,8 +220,12 @@ QString Widget::extractSystemName(QString line)
 {
 	QString tmpSystemName = MySystem;
 	// regexp reads "<ANYTHING>System:<ANY_NUMBER_OF_DIGITS>(" for match
-	QStringList parsed = line.split(QRegExp("(.*)System:?\\d+\\("));
-	QStringList finale = parsed[1].split(") Body:");
+	//QStringList parsed = line.split(QRegExp("(.*)System:?\\d+\\("));
+
+	// v2.1 the engineers update change:
+	// {07:31:19} System:"Shinrarta Dezhra" StarPos:(55.719,17.594,27.156)ly  NormalFlight
+	QStringList parsed = line.split(QRegExp("(.*)System:\""));
+	QStringList finale = parsed[1].split("\" StarPos:");
 
 	// check if we ignore Training system (playing in training missions)
 	if ((finale[0] == "Training" || finale[0] == "Destination") && (ui->IgnoreTraining->isChecked()))
