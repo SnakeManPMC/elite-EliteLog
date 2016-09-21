@@ -16,20 +16,23 @@ fileInfo.setFile(oldFile);
 QDateTime created = fileInfo.lastModified();
 */
 
-#include "widget.h"
-#include "ui_widget.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 #include "fileops.h"
 
 #include <QtWidgets>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QDebug>
 
-Widget::Widget(QWidget *parent) :
-	QWidget(parent),
-	ui(new Ui::Widget)
+MainWindow::MainWindow(QWidget *parent) :
+	QMainWindow(parent),
+	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0.4";
+	eliteLogVersion = "v1.0.4 build 4";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -38,7 +41,7 @@ Widget::Widget(QWidget *parent) :
 	numAllSystems = 0;
 	cmdrLogFileName = "EliteLog.log";
 
-	getLogDirectory();
+	readEliteCFG();
 
 	// AppConfig.xml reading and adding VerboseLogging if its missing.
 	FileOps fo(logDirectory);
@@ -53,7 +56,7 @@ Widget::Widget(QWidget *parent) :
 	scanDirectoryLogs();
 	ui->textEdit->append("Welcome, current UTC time is: " + timeUTCtoString());
 
-	// start the looping timer: void Widget::timerEvent(QTimerEvent *event)
+	// start the looping timer: void MainWindow::timerEvent(QTimerEvent *event)
 /*
 Hyperjump times (ASP, FSD class 5 rating A. for elite log hammering)
 FSD charging 15sec
@@ -63,18 +66,17 @@ FSD cooldown start delay 4sec (total 37-40sec)
 FSD cooldown 4sec (total 41-44sec)
  */
 	// was 5000, but lets try 10000 (10sec) now
-	timerId = startTimer(10000);
+	timerId = startTimer(5000);
 }
 
-Widget::~Widget()
+MainWindow::~MainWindow()
 {
 	// timer stuff
 	killTimer(timerId);
 	delete ui;
 }
 
-
-void Widget::getLogDirectory()
+void MainWindow::readEliteCFG()
 {
 	QFile file("EliteLog.cfg");
 
@@ -89,18 +91,38 @@ void Widget::getLogDirectory()
 
 	QTextStream in(&file);
 
+	// log directory path
 	logDirectory = in.readLine();
+
+	// highest session jump record + date
 	QString tmp = in.readLine();
 	QStringList parsed = tmp.split(",");
 	bool ok;
 	numSessionSystemsRecord = parsed[0].toInt(&ok, 10);
 	numSessionSystemsRecordDate = parsed[1];
-	//ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
+
+	// CMDR deaths
+	tmp = in.readLine();
+	deaths = tmp.toInt(&ok, 10);
+
+	// Fuel scooped total
+	tmp = in.readLine();
+	scoopedTotal = tmp.toDouble(&ok);
+
+	// jump distance shortest
+	tmp = in.readLine();
+	JumpDistShortest = tmp.toDouble(&ok);
+
+	// jump distance longest
+	tmp = in.readLine();
+	JumpDistLongest = tmp.toDouble(&ok);
+
+	ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
 	file.close();
 }
 
 
-void Widget::saveEliteCFG()
+void MainWindow::saveEliteCFG()
 {
 	QFile file("EliteLog.cfg");
 
@@ -119,6 +141,13 @@ void Widget::saveEliteCFG()
 	out << ",";
 	out << numSessionSystemsRecordDate;
 	out << "\n";
+	out << deaths;
+	out << "\n";
+	out << scoopedTotal;
+	out << "\n";
+	out << JumpDistShortest;
+	out << "\n";
+	out << JumpDistLongest;
 
 	file.close();
 }
@@ -126,10 +155,11 @@ void Widget::saveEliteCFG()
 
 // reads contents of LOG directory, checks the newest file
 // if path or log file is not correct, it gives some index out of bounds error?
-void Widget::scanDirectoryLogs()
+void MainWindow::scanDirectoryLogs()
 {
-	QString elite_path = logDirectory + "\\Logs";
-	QStringList nameFilter("netLog.*.log");
+	//QString elite_path = logDirectory + "\\Logs";
+	QString elite_path = logDirectory;
+	QStringList nameFilter("Journal.*.log");
 	QDir directory(elite_path);
 	QStringList txtFilesAndDirectories = directory.entryList(nameFilter, QDir::NoFilter, QDir::Time);
 
@@ -150,7 +180,7 @@ void Widget::scanDirectoryLogs()
 		// and set file position to zero
 		filePos = 0;
 
-		//ui->textEdit->append("New log file found! CurrentLogName set to: " + CurrentLogName + ", filePos set to: 0");
+		ui->textEdit->append("New log file found! CurrentLogName set to: " + CurrentLogName + ", filePos set to: 0");
 	}
 
 	// this doesnt work as windows is too lazy to update the lastModified time for a file :(
@@ -163,7 +193,7 @@ void Widget::scanDirectoryLogs()
 
 
 // parses the Star System name from the LOG file
-void Widget::parseLog(QString elite_path)
+void MainWindow::parseLog(QString elite_path)
 {
 	//ui->textEdit->append("Trying to open path+filename of: " + elite_path);
 	QFile file(elite_path);
@@ -175,10 +205,6 @@ void Widget::parseLog(QString elite_path)
 		return;
 	}
 
-	//ui->textEdit->append("Opened " + elite_path);
-	QString line;
-	QTextStream in(&file);
-
 	// we have position changed, ie we have already read this file a bit
 	if (filePos > 0)
 	{
@@ -186,26 +212,11 @@ void Widget::parseLog(QString elite_path)
 		//ui->textEdit->append("Set file.seek -> filePos to " + QString::number(filePos));
 	}
 
-	while (!in.atEnd())
+	while (!file.atEnd())
 	{
-		line = in.readLine();
-
-		// we have matching line of star system name
-		if (line.contains("System:"))
-		{
-			MySystem = extractSystemName(line);
-			//ui->textEdit->append(MySystem);
-		}
-
-		// found FindBestIsland, which is same as station name
-		if (line.contains("} FindBestIsland:"))
-		{
-			//qDebug() << "Going into FindBEstIsland";
-			MyStation = extractStationName(line);
-			// set station label
-			ui->StationName->setText("Station: " + MyStation);
-		}
+		parseSystemsJSON(file.readLine());
 	}
+
 	// mark the position our file
 	filePos = file.pos();
 	// close right away, this eventually is not what we want
@@ -215,8 +226,231 @@ void Widget::parseLog(QString elite_path)
 }
 
 
+void MainWindow::parseSystemsJSON(QByteArray line)
+{
+	QJsonDocument d = QJsonDocument::fromJson(line);
+	qDebug() << "isArray: " << d.isArray() << ", isEmpty: " << d.isEmpty() << ", isObject: " << d.isObject();
+
+	QJsonObject sett2 = d.object();
+	QJsonValue value = sett2.value(QString("event"));
+	qDebug() << value;
+	ui->textEdit->append("Event: " + value.toString());
+
+	// FSDJump
+	if (!value.toString().compare("FSDJump", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("StarSystem"));
+		MySystem = value.toString();
+		ui->textEdit->append("StarSystem: " + MySystem);
+
+		// no station in immediate FSD jump range :)
+		ui->StationName->setText("Station: -");
+
+		value = sett2.value(QString("JumpDist"));
+		qDebug() << value;
+
+		// new shortest jump record
+		if (JumpDistShortest > value.toDouble())
+		{
+			JumpDistShortest = value.toDouble();
+			ui->textEdit->append("New shortest jump distance record!");
+			ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
+			saveEliteCFG();
+		}
+		// new longest jump record
+		if (JumpDistLongest < value.toDouble())
+		{
+			JumpDistLongest = value.toDouble();
+			ui->textEdit->append("New longest jump distance record!");
+			ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
+			saveEliteCFG();
+		}
+
+		JumpDist = value.toDouble();
+		ui->JumpDistanceLast->setText("Last jump distance: " + QString::number(value.toDouble()));
+
+		value = sett2.value(QString("FuelUsed"));
+		qDebug() << value;
+		FuelUsed = value.toDouble();
+		ui->textEdit->append("FuelUsed: " + QString::number(value.toDouble()));
+
+		value = sett2.value(QString("FuelLevel"));
+		qDebug() << value;
+		FuelLevel = value.toDouble();
+		ui->textEdit->append("FuelLevel: " + QString::number(value.toDouble()));
+	}
+
+	// Location
+	if (!value.toString().compare("location", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("StarSystem"));
+		MySystem = value.toString();
+		ui->textEdit->append("StarSystem: " + MySystem);
+
+		value = sett2.value(QString("StationName"));
+		MyStation = value.toString();
+		ui->textEdit->append("StationName: " + MyStation);
+		ui->StationName->setText("Station: " + MyStation);
+	}
+
+	// Docked
+	if (!value.toString().compare("docked", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("StarSystem"));
+		MySystem = value.toString();
+		ui->textEdit->append("StarSystem: " + MySystem);
+
+		value = sett2.value(QString("StationName"));
+		MyStation = value.toString();
+		ui->textEdit->append("StationName: " + MyStation);
+		ui->StationName->setText("Station: " + MyStation);
+	}
+
+	// Undocked
+	if (!value.toString().compare("Undocked", Qt::CaseInsensitive))
+	{
+		// star system is the same, we only left the station
+		MyStation.clear();
+		ui->textEdit->append("StationName: " + MyStation);
+		ui->StationName->setText("Station: " + MyStation);
+	}
+
+	// Died
+	if (!value.toString().compare("Died", Qt::CaseInsensitive))
+	{
+		deaths++;
+		ui->Deaths->setText("CMDR Deaths: " + QString::number(deaths));
+		ui->textEdit->append("You died! :) You have died " + QString::number(deaths) + " times!");
+	}
+
+	// Scan (exploration object)
+	if (!value.toString().compare("Scan", Qt::CaseInsensitive))
+	{
+		ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
+		// if its a STAR it includes StarType value
+		if (sett2.contains("StarType"))
+		{
+			ui->textEdit->append("*** DEBUG 'SCAN' IF-> StarType DETECTED! ***");
+			value = sett2.value(QString("BodyName"));
+			ui->textEdit->append("BodyName: " + value.toString());
+
+			value = sett2.value(QString("StarType"));
+			ui->textEdit->append("Star type: " + value.toString());
+
+			value = sett2.value(QString("DistanceFromArrivalLS"));
+			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("StellarMass"));
+			ui->textEdit->append("StellarMass: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("Radius"));
+			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
+		}
+
+		// if its a PLANET it includes PlanetClass
+		if (sett2.contains("PlanetClass"))
+		{
+			ui->textEdit->append("*** DEBUG 'SCAN' IF-> PlanetClass DETECTED! ***");
+			value = sett2.value(QString("BodyName"));
+			ui->textEdit->append("BodyName: " + value.toString());
+
+			value = sett2.value(QString("TerraformState"));
+			ui->textEdit->append("TerraformState: " + value.toString());
+
+			value = sett2.value(QString("PlanetClass"));
+			ui->textEdit->append("PlanetClass: " + value.toString());
+
+			value = sett2.value(QString("Atmosphere"));
+			ui->textEdit->append("Atmosphere: " + value.toString());
+
+			value = sett2.value(QString("Volcanism"));
+			ui->textEdit->append("Volcanism: " + value.toString());
+
+			value = sett2.value(QString("DistanceFromArrivalLS"));
+			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("TidalLock"));
+			ui->textEdit->append("TidalLock: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("MassEM"));
+			ui->textEdit->append("MassEM: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("Radius"));
+			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("SurfaceGravity"));
+			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("SurfaceTemperature"));
+			ui->textEdit->append("SurfaceTemperature: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("SurfacePressure"));
+			ui->textEdit->append("SurfacePressure: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("Landable"));
+			ui->textEdit->append("Landable: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("OrbitalPeriod"));
+			ui->textEdit->append("OrbitalPeriod: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("RotationPeriod"));
+			ui->textEdit->append("RotationPeriod: " + QString::number(value.toDouble()));
+
+			value = sett2.value(QString("Rings"));
+			ui->textEdit->append("Rings: " + QString::number(value.toDouble()));
+
+			// Materials
+			QJsonObject fucker = sett2.value(QString("Materials")).toObject();
+			for(QJsonObject::const_iterator iter = fucker.begin(); iter != fucker.end(); ++iter)
+			{
+				qDebug() << iter.key() << iter.value();
+			}
+		}
+	}
+	/*
+"Materials":{ "iron":35.1, "nickel":26.5, "chromium":15.8, "manganese":14.5, "niobium":2.4, "yttrium":2.1, "tungsten":1.9, "arsenic":1.7 },
+	 */
+
+	// SellExplorationData
+	/*
+{ "timestamp":"2016-06-10T14:32:03Z", "event":"SellExplorationData", "Systems":[ "HIP 78085", "Praea Euq NW-W b1-3" ], "Discovered":[ "HIP 78085 A", "Praea Euq NW-W b1-3", "Praea Euq NW-W b1-3 3 a", "Praea Euq NW-W b1-3 3" ], "BaseValue":10822, "Bonus":3959 }
+*/
+	// MaterialCollected
+	if (!value.toString().compare("MaterialCollected", Qt::CaseInsensitive))
+	{
+		// if its a RAW
+		QString tmp = sett2.value(QString("Category")).toString();
+
+		if (!tmp.compare("Raw"))
+		{
+			value = sett2.value(QString("Name"));
+			ui->textEdit->append("MaterialCollected, Raw, Name: " + value.toString());
+		}
+
+		if (!tmp.compare("Encoded"))
+		{
+			value = sett2.value(QString("Name"));
+			ui->textEdit->append("MaterialCollected, Encoded, Name: " + value.toString());
+		}
+	}
+
+	// FuelScoop
+	if (!value.toString().compare("FuelScoop", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Scooped"));
+		scoopedTotal += value.toDouble();
+		ui->textEdit->append("Scooped: " + QString::number(value.toDouble()) + ", total scooped: " + QString::number(scoopedTotal));
+		ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal));
+
+		// EliteLog.CFG update, but damn you will hammer this saving a lot
+		// when exploring and fuel scooping every few minutes :(
+		saveEliteCFG();
+	}
+}
+
+
 // extracts the actual star system name from last system: entry
-QString Widget::extractSystemName(QString line)
+QString MainWindow::extractSystemName(QString line)
 {
 	QString tmpSystemName = MySystem;
 	// regexp reads "<ANYTHING>System:<ANY_NUMBER_OF_DIGITS>(" for match
@@ -235,7 +469,7 @@ QString Widget::extractSystemName(QString line)
 }
 
 
-QString Widget::extractStationName(QString line)
+QString MainWindow::extractStationName(QString line)
 {
 	QString final;
 	QStringList parsed = line.split(":");
@@ -249,7 +483,7 @@ QString Widget::extractStationName(QString line)
 
 
 // returns current UTC time as string
-QString Widget::timeUTCtoString()
+QString MainWindow::timeUTCtoString()
 {
 	QDateTime date = QDateTime::currentDateTimeUtc();
 	QString utctime = date.toString(Qt::ISODate);
@@ -259,7 +493,7 @@ QString Widget::timeUTCtoString()
 
 
 // at program start read LOG for our last Star System we were in
-void Widget::readCmdrLog()
+void MainWindow::readCmdrLog()
 {
 	QFile CmdrLog(cmdrLogFileName);
 
@@ -293,7 +527,7 @@ void Widget::readCmdrLog()
 
 
 // write new Star System name and UTC time string into LOG file
-void Widget::writeCmdrLog()
+void MainWindow::writeCmdrLog()
 {
 	QFile CmdrLog(cmdrLogFileName);
 
@@ -311,8 +545,8 @@ void Widget::writeCmdrLog()
 }
 
 
-// this runs between seconds of as specificed in Widget constructor
-void Widget::timerEvent(QTimerEvent *event)
+// this runs between seconds of as specificed in MainWindow constructor
+void MainWindow::timerEvent(QTimerEvent *event)
 {
 	// this updates according to: timerId = startTimer(5000);
 	QString oldsystem = MySystem;
@@ -355,7 +589,7 @@ void Widget::timerEvent(QTimerEvent *event)
 
 
 // copy star system name to clipboard (so it can be pasted to IRC etc hehe)
-void Widget::on_pushButton_clicked()
+void MainWindow::on_pushButton_clicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(MySystem);
@@ -363,7 +597,7 @@ void Widget::on_pushButton_clicked()
 
 
 // copy station name to clipboard
-void Widget::on_pushButton_2_clicked()
+void MainWindow::on_pushButton_2_clicked()
 {
 	// station to clipboard
 	QClipboard *clipboard = QApplication::clipboard();
@@ -372,7 +606,7 @@ void Widget::on_pushButton_2_clicked()
 
 
 // utc timestamp to clipboard
-void Widget::on_pushButton_3_clicked()
+void MainWindow::on_pushButton_3_clicked()
 {
 	// station to clipboard
 	QClipboard *clipboard = QApplication::clipboard();
@@ -380,7 +614,7 @@ void Widget::on_pushButton_3_clicked()
 }
 
 
-bool Widget::fileChangedOrNot(QString elite_file)
+bool MainWindow::fileChangedOrNot(QString elite_file)
 {
 	QFile elite_log(elite_file);
 	QFileInfo fileInfo;
@@ -422,18 +656,22 @@ bool Widget::fileChangedOrNot(QString elite_file)
 
 
 // check for unique never before visited system, if it is, add it to the list
-void Widget::checkUniqueSystem(QString MySystem)
+void MainWindow::checkUniqueSystem(QString MySystem)
 {
 	if (!uniqueSystems.contains(MySystem)) uniqueSystems.push_back(MySystem);
 }
 
 
 // updates the Label on UI for unique systems visited
-void Widget::updateSystemsVisited()
+void MainWindow::updateSystemsVisited()
 {
 	// update label which shows number of unique systems
 	ui->SystemsVisited->setText("Unique Systems: " + QString::number(uniqueSystems.count()));
 	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord)
 					 + " at " + numSessionSystemsRecordDate);
 	ui->totalSystemsVisited->setText("Total Systems: " + QString::number(numAllSystems));
+	// this doesnt need to be here, but I dont know where else
+	// will it be updated on program start?
+	ui->Deaths->setText("CMDR Deaths: " + QString::number(deaths));
+	ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal));
 }

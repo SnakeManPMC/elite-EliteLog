@@ -1,40 +1,43 @@
-#ifndef WIDGET_H
-#define WIDGET_H
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
 
-#include <QWidget>
+#include <QMainWindow>
 #include <QDateTime>
 
 namespace Ui {
-class Widget;
+class MainWindow;
 }
 
-class Widget : public QWidget
+class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	explicit Widget(QWidget *parent = 0);
-	~Widget();
+	explicit MainWindow(QWidget *parent = 0);
+	~MainWindow();
 
 private:
-	Ui::Widget *ui;
+	Ui::MainWindow *ui;
 	void readCmdrLog();
 	void scanDirectoryLogs();
 	void parseLog(QString elite_path);
 	void writeCmdrLog();
 	void checkUniqueSystem(QString MySystem);
 	void updateSystemsVisited();
-	void getLogDirectory();
+	void readEliteCFG();
 	void saveEliteCFG();
+	void parseSystemsJSON(QByteArray line);
 	QString timeUTCtoString();
 	QString extractSystemName(QString line);
 	QString extractStationName(QString line);
 	QString MySystem,MyStation,CurrentLogName;
+	QString JumpDist,FuelUsed,FuelLevel;
 	QStringList uniqueSystems;
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
+	double scoopedTotal,JumpDistShortest,JumpDistLongest;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
@@ -46,4 +49,4 @@ private slots:
 	void on_pushButton_3_clicked();
 };
 
-#endif // WIDGET_H
+#endif // MAINWINDOW_H

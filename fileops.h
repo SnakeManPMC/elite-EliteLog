@@ -11,8 +11,6 @@ public:
 	QString CheckVerboseValue();
 
 private:
-	void ReadXMLFile();
-	void parseXML();
 	void AppConfigLocal(QString LogDirectory, QString ConfigName);
 	bool fileExists(QString path);
 	bool VerboseLogging;

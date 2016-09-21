@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-12-20T14:23:54
+# Project created by QtCreator 2016-09-02T10:33:07
 #
 #-------------------------------------------------
 
@@ -13,10 +13,12 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        widget.cpp \
+        mainwindow.cpp \
     fileops.cpp
 
-HEADERS  += widget.h \
+HEADERS  += mainwindow.h \
     fileops.h
 
-FORMS    += widget.ui
+FORMS    += mainwindow.ui
+
+QMAKE_CXXFLAGS_WARN_OFF -= -Wunused-parameter
