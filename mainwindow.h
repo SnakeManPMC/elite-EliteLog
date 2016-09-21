@@ -37,7 +37,7 @@ private:
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
-	double scoopedTotal,JumpDistShortest,JumpDistLongest;
+	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 

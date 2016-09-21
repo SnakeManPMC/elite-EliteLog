@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.0.4 build 4";
+	eliteLogVersion = "v1.1 build 5";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -44,10 +44,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	readEliteCFG();
 
 	// AppConfig.xml reading and adding VerboseLogging if its missing.
-	FileOps fo(logDirectory);
+	// Elite v2.2 introduces Journal JSON files in stupid
+	// C:\Users\USERNAME\Saved Games\Frontier Developments\Elite Dangerous\ directory
+	// so we disable out appconfig.xml edits as they are obsolete
+	//FileOps fo(logDirectory);
 
 	// kind of debug thing, but still
-	ui->textEdit->append("Log directory: " + logDirectory + "\\Logs");
+	ui->textEdit->append("Log directory: " + logDirectory);
 
 	// at start we read our log and latest / current Star System
 	readCmdrLog();
@@ -117,7 +120,15 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	JumpDistLongest = tmp.toDouble(&ok);
 
-	ui->textEdit->append("EliteLog.cfg says game dir is: " + logDirectory);
+	// LS distance shortest
+	tmp = in.readLine();
+	DistanceFromArrivalLSMin = tmp.toDouble(&ok);
+
+	// LS distance longest
+	tmp = in.readLine();
+	DistanceFromArrivalLSMax = tmp.toDouble(&ok);
+
+	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
 
@@ -148,6 +159,10 @@ void MainWindow::saveEliteCFG()
 	out << JumpDistShortest;
 	out << "\n";
 	out << JumpDistLongest;
+	out << "\n";
+	out << DistanceFromArrivalLSMin;
+	out << "\n";
+	out << DistanceFromArrivalLSMax;
 
 	file.close();
 }
@@ -157,7 +172,6 @@ void MainWindow::saveEliteCFG()
 // if path or log file is not correct, it gives some index out of bounds error?
 void MainWindow::scanDirectoryLogs()
 {
-	//QString elite_path = logDirectory + "\\Logs";
 	QString elite_path = logDirectory;
 	QStringList nameFilter("Journal.*.log");
 	QDir directory(elite_path);
@@ -367,6 +381,23 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("Volcanism: " + value.toString());
 
 			value = sett2.value(QString("DistanceFromArrivalLS"));
+			// new minimum LS highscore
+			if (DistanceFromArrivalLSMin > value.toDouble())
+			{
+				DistanceFromArrivalLSMin = value.toDouble();
+				ui->textEdit->append("New DistanceFromArrivalLSMin highscore! " + QString::number(DistanceFromArrivalLSMin));
+				ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
+				saveEliteCFG();
+			}
+			// new maximum LS highscore
+			if (DistanceFromArrivalLSMax < value.toDouble())
+			{
+				DistanceFromArrivalLSMax = value.toDouble();
+				ui->textEdit->append("New DistanceFromArrivalLSMax highscore! " + QString::number(DistanceFromArrivalLSMax));
+				ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
+				saveEliteCFG();
+			}
+
 			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("TidalLock"));

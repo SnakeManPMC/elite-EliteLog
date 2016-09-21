@@ -196,6 +196,19 @@
      <string>Jump distance shortest: -, longest: -</string>
     </property>
    </widget>
+   <widget class="QLabel" name="DistanceLSRecords">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>130</y>
+      <width>481</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Planet Light Seconds from star closest: -, furthest: -</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
