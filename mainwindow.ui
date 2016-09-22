@@ -79,6 +79,20 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="StarMassRecords">
+      <property name="text">
+       <string>Star mass  lowest: -, highest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="StarRadiusRecords">
+      <property name="text">
+       <string>Star radius smallest: -, largest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="DistanceLSRecords">
       <property name="text">
        <string>Planet Light Seconds from star closest: -, furthest: -</string>

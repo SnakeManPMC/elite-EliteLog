@@ -144,6 +144,22 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	surfaceGravityHighest = tmp.toDouble(&ok);
 
+	// stellar mass lowest
+	tmp = in.readLine();
+	stellarMassLowest = tmp.toDouble(&ok);
+
+	// stellar mass highest
+	tmp = in.readLine();
+	stellarMassHighest = tmp.toDouble(&ok);
+
+	// stellar radius smallest
+	tmp = in.readLine();
+	stellarRadiusSmallest = tmp.toDouble(&ok);
+
+	// stellar radius largest
+	tmp = in.readLine();
+	stellarRadiusLargest = tmp.toDouble(&ok);
+
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
@@ -187,6 +203,14 @@ void MainWindow::saveEliteCFG()
 	out << surfaceGravityLowest;
 	out << "\n";
 	out << surfaceGravityHighest;
+	out << "\n";
+	out << stellarMassLowest;
+	out << "\n";
+	out << stellarMassHighest;
+	out << "\n";
+	out << stellarRadiusSmallest;
+	out << "\n";
+	out << stellarRadiusLargest;
 
 	file.close();
 }
@@ -382,9 +406,41 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("StellarMass"));
+			// stellarMass lowest highscore
+			if (stellarMassLowest > value.toDouble())
+			{
+				stellarMassLowest = value.toDouble();
+				ui->textEdit->append("New stellarMass highscore LOWEST!");
+				ui->StarMassRecords->setText("Star mass lowest: " + QString::number(stellarMassLowest) + ", highest: " + QString::number(stellarMassHighest));
+				saveEliteCFG();
+			}
+			// stellarMass highest highscore
+			if (stellarMassHighest < value.toDouble())
+			{
+				stellarMassHighest = value.toDouble();
+				ui->textEdit->append("New stellarMass highscore HIGHEST!");
+				ui->StarMassRecords->setText("Star mass lowest: " + QString::number(stellarMassLowest) + ", highest: " + QString::number(stellarMassHighest));
+				saveEliteCFG();
+			}
 			ui->textEdit->append("StellarMass: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("Radius"));
+			// stellar radius smallest highscore
+			if (stellarRadiusSmallest > value.toDouble())
+			{
+				stellarRadiusSmallest = value.toDouble();
+				ui->textEdit->append("New stellar radius smallest highscore!");
+				ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
+				saveEliteCFG();
+			}
+			// stellar radius largest highscore
+			if (stellarRadiusLargest < value.toDouble())
+			{
+				stellarRadiusLargest = value.toDouble();
+				ui->textEdit->append("New stellar radius largest highscore!");
+				ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
+				saveEliteCFG();
+			}
 			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
 		}
 

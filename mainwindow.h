@@ -39,6 +39,7 @@ private:
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
 	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	double planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
+	double stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
