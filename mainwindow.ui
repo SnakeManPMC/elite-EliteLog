@@ -235,6 +235,19 @@
      <string>Planet radius smallest: -, largest: -</string>
     </property>
    </widget>
+   <widget class="QLabel" name="PlanetGravityRecords">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>190</y>
+      <width>481</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Planet gravity lowest: -, highest: -</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

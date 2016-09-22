@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 6";
+	eliteLogVersion = "v1.1 build 7";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -136,6 +136,14 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	planetRadiusLargest = tmp.toDouble(&ok);
 
+	// planet surface gravity lowest
+	tmp = in.readLine();
+	surfaceGravityLowest = tmp.toDouble(&ok);
+
+	// planet surface gravity highest
+	tmp = in.readLine();
+	surfaceGravityHighest = tmp.toDouble(&ok);
+
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
@@ -175,6 +183,10 @@ void MainWindow::saveEliteCFG()
 	out << planetRadiusSmallest;
 	out << "\n";
 	out << planetRadiusLargest;
+	out << "\n";
+	out << surfaceGravityLowest;
+	out << "\n";
+	out << surfaceGravityHighest;
 
 	file.close();
 }
@@ -441,6 +453,22 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("SurfaceGravity"));
+			// planet gravity lowest highscore
+			if (surfaceGravityLowest > value.toDouble())
+			{
+				surfaceGravityLowest = value.toDouble();
+				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest));
+				ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
+				saveEliteCFG();
+			}
+			// planet gravity highest highscore
+			if (surfaceGravityHighest < value.toDouble())
+			{
+				surfaceGravityHighest = value.toDouble();
+				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest));
+				ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
+				saveEliteCFG();
+			}
 			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("SurfaceTemperature"));

@@ -38,7 +38,7 @@ private:
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
 	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
-	double planetRadiusSmallest,planetRadiusLargest;
+	double planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
