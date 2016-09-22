@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 5";
+	eliteLogVersion = "v1.1 build 6";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -255,6 +255,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	{
 		value = sett2.value(QString("StarSystem"));
 		MySystem = value.toString();
+		ui->SystemName->setText("System: " + MySystem);
 		ui->textEdit->append("StarSystem: " + MySystem);
 
 		// no station in immediate FSD jump range :)
@@ -299,6 +300,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	{
 		value = sett2.value(QString("StarSystem"));
 		MySystem = value.toString();
+		ui->SystemName->setText("System: " + MySystem);
 		ui->textEdit->append("StarSystem: " + MySystem);
 
 		value = sett2.value(QString("StationName"));
@@ -312,6 +314,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	{
 		value = sett2.value(QString("StarSystem"));
 		MySystem = value.toString();
+		ui->SystemName->setText("System: " + MySystem);
 		ui->textEdit->append("StarSystem: " + MySystem);
 
 		value = sett2.value(QString("StationName"));
