@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 7";
+	eliteLogVersion = "v1.1 build 8";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -396,15 +396,18 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("BodyName: " + value.toString());
 
 			value = sett2.value(QString("TerraformState"));
+			qDebug() << "TerraformState: " << value;
 			ui->textEdit->append("TerraformState: " + value.toString());
 
 			value = sett2.value(QString("PlanetClass"));
 			ui->textEdit->append("PlanetClass: " + value.toString());
 
 			value = sett2.value(QString("Atmosphere"));
+			qDebug() << "Atmosphere: " << value;
 			ui->textEdit->append("Atmosphere: " + value.toString());
 
 			value = sett2.value(QString("Volcanism"));
+			qDebug() << "Volcanism: " << value;
 			ui->textEdit->append("Volcanism: " + value.toString());
 
 			value = sett2.value(QString("DistanceFromArrivalLS"));
@@ -427,7 +430,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("TidalLock"));
-			ui->textEdit->append("TidalLock: " + QString::number(value.toDouble()));
+			qDebug() << "TidalLock: " << value;
+			ui->textEdit->append("TidalLock: " + QString::number(value.toBool()));
 
 			value = sett2.value(QString("MassEM"));
 			ui->textEdit->append("MassEM: " + QString::number(value.toDouble()));
@@ -478,7 +482,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("SurfacePressure: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("Landable"));
-			ui->textEdit->append("Landable: " + QString::number(value.toDouble()));
+			qDebug() << "Landable: " << value;
+			ui->textEdit->append("Landable: " + QString::number(value.toBool()));
 
 			value = sett2.value(QString("OrbitalPeriod"));
 			ui->textEdit->append("OrbitalPeriod: " + QString::number(value.toDouble()));
@@ -486,8 +491,15 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("RotationPeriod"));
 			ui->textEdit->append("RotationPeriod: " + QString::number(value.toDouble()));
 
+			/*
+			 * rings is an array of sorts :)
+			 *
+			 * "Rings":[ { "Name":"Eol Prou LW-L c8-76 A A Belt", "RingClass":"eRingClass_MetalRich", "MassMT":1.05e+14, "InnerRad":8.95e+08, "OuterRad":2.04e+09 } ]
+			 *
 			value = sett2.value(QString("Rings"));
-			ui->textEdit->append("Rings: " + QString::number(value.toDouble()));
+			qDebug() << "Rings: " << value;
+			ui->textEdit->append("Rings: " + value.toBool());
+			*/
 
 			// Materials
 			QJsonObject fucker = sett2.value(QString("Materials")).toObject();
