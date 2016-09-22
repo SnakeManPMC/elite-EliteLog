@@ -6,255 +6,148 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>840</width>
-    <height>606</height>
+    <width>700</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTextEdit" name="textEdit">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>260</y>
-      <width>821</width>
-      <height>301</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="StationName">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>90</y>
-      <width>771</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Station: </string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="SysNamAutoClipboard">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>200</y>
-      <width>161</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>System name auto clipboard</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>220</y>
-      <width>131</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>System to clipboard</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>160</x>
-      <y>220</y>
-      <width>131</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Station to clipboard</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_3">
-    <property name="geometry">
-     <rect>
-      <x>300</x>
-      <y>220</y>
-      <width>151</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>UTC time to clipboard</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="SystemsVisited">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>781</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Systems visited: xxx</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="SessionSystemVisits">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>10</y>
-      <width>781</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Session systems: xxx</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="totalSystemsVisited">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>50</y>
-      <width>771</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>totalSystemsVisited</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="IgnoreTraining">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>230</y>
-      <width>141</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>IgnoreTraining</string>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="JumpDistanceLast">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>110</y>
-      <width>241</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Last jump distance: -</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="Deaths">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>110</y>
-      <width>111</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>CMDR Deaths: -</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="FuelScoopedTotal">
-    <property name="geometry">
-     <rect>
-      <x>250</x>
-      <y>110</y>
-      <width>161</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Fuel scooped: 0</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="JumpDistanceRecords">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>130</y>
-      <width>241</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Jump distance shortest: -, longest: -</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="DistanceLSRecords">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>150</y>
-      <width>481</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Planet Light Seconds from star closest: -, furthest: -</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="SystemName">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>70</y>
-      <width>771</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>System: </string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PlanetRadiusRecords">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>170</y>
-      <width>481</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Planet radius smallest: -, largest: -</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="PlanetGravityRecords">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>190</y>
-      <width>481</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Planet gravity lowest: -, highest: -</string>
-    </property>
-   </widget>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLabel" name="SessionSystemVisits">
+      <property name="text">
+       <string>Session systems: xxx</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="SystemsVisited">
+      <property name="text">
+       <string>Systems visited: xxx</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="totalSystemsVisited">
+      <property name="text">
+       <string>totalSystemsVisited</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="SystemName">
+      <property name="text">
+       <string>System: </string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="StationName">
+      <property name="text">
+       <string>Station: </string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="JumpDistanceLast">
+      <property name="text">
+       <string>Last jump distance: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="JumpDistanceRecords">
+      <property name="text">
+       <string>Jump distance shortest: -, longest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="FuelScoopedTotal">
+      <property name="text">
+       <string>Fuel scooped: 0</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="Deaths">
+      <property name="text">
+       <string>CMDR Deaths: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="DistanceLSRecords">
+      <property name="text">
+       <string>Planet Light Seconds from star closest: -, furthest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PlanetRadiusRecords">
+      <property name="text">
+       <string>Planet radius smallest: -, largest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="PlanetGravityRecords">
+      <property name="text">
+       <string>Planet gravity lowest: -, highest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="IgnoreTraining">
+      <property name="text">
+       <string>IgnoreTraining</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="SysNamAutoClipboard">
+      <property name="text">
+       <string>System name auto clipboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="textEdit"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="text">
+       <string>UTC time to clipboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_2">
+      <property name="text">
+       <string>Station to clipboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>System to clipboard</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>840</width>
+     <width>700</width>
      <height>18</height>
     </rect>
    </property>
