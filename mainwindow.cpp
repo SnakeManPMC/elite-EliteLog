@@ -128,6 +128,14 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	DistanceFromArrivalLSMax = tmp.toDouble(&ok);
 
+	// planet radius smallest
+	tmp = in.readLine();
+	planetRadiusSmallest = tmp.toDouble(&ok);
+
+	// planet radius largest
+	tmp = in.readLine();
+	planetRadiusLargest = tmp.toDouble(&ok);
+
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
@@ -163,6 +171,10 @@ void MainWindow::saveEliteCFG()
 	out << DistanceFromArrivalLSMin;
 	out << "\n";
 	out << DistanceFromArrivalLSMax;
+	out << "\n";
+	out << planetRadiusSmallest;
+	out << "\n";
+	out << planetRadiusLargest;
 
 	file.close();
 }
@@ -400,7 +412,6 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
 				saveEliteCFG();
 			}
-
 			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("TidalLock"));
@@ -409,7 +420,24 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("MassEM"));
 			ui->textEdit->append("MassEM: " + QString::number(value.toDouble()));
 
+			// radius in JSON is in METERS, so divide by 1000 to get kilometers
 			value = sett2.value(QString("Radius"));
+			// planet radius smallest highscore
+			if (planetRadiusSmallest > value.toDouble())
+			{
+				planetRadiusSmallest = value.toDouble();
+				ui->textEdit->append("New highscore planet radius SMALLEST! " + QString::number(planetRadiusSmallest / 1000));
+				ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
+				saveEliteCFG();
+			}
+			// planet radius largest highscore
+			if (planetRadiusLargest < value.toDouble())
+			{
+				planetRadiusLargest = value.toDouble();
+				ui->textEdit->append("New highscore planet radius LARGEST! " + QString::number(planetRadiusLargest / 1000));
+				ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
+				saveEliteCFG();
+			}
 			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
 
 			value = sett2.value(QString("SurfaceGravity"));
