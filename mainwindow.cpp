@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 8";
+	eliteLogVersion = "v1.1 build 9";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -69,7 +69,7 @@ FSD cooldown start delay 4sec (total 37-40sec)
 FSD cooldown 4sec (total 41-44sec)
  */
 	// was 5000, but lets try 10000 (10sec) now
-	timerId = startTimer(5000);
+	timerId = startTimer(1000);
 }
 
 MainWindow::~MainWindow()
