@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 10";
+	eliteLogVersion = "v1.1 build 11";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -60,14 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->textEdit->append("Welcome, current UTC time is: " + timeUTCtoString());
 
 	// start the looping timer: void MainWindow::timerEvent(QTimerEvent *event)
-/*
-Hyperjump times (ASP, FSD class 5 rating A. for elite log hammering)
-FSD charging 15sec
-Countdown 5sec (total 20sec)
-Hyperjump 13-16sec (total 33-36sec) but this depends really how long the server connection takes...
-FSD cooldown start delay 4sec (total 37-40sec)
-FSD cooldown 4sec (total 41-44sec)
- */
 	// was 5000, but lets try 10000 (10sec) now
 	timerId = startTimer(2500);
 }
@@ -441,7 +433,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	}
 
 	// Location
-	if (!value.toString().compare("location", Qt::CaseInsensitive))
+	if (!value.toString().compare("Location", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("StarSystem"));
 		MySystem = value.toString();
@@ -452,6 +444,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		MyStation = value.toString();
 		ui->textEdit->append("StationName: " + MyStation);
 		ui->StationName->setText("Station: " + MyStation);
+
+		// missing lot of stuff now, Location is very similar to FSDJump ...
 	}
 
 	/*
@@ -764,10 +758,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			}
 		}
 	}
-
+/*
 	// SellExplorationData
-	/*
 { "timestamp":"2016-06-10T14:32:03Z", "event":"SellExplorationData", "Systems":[ "HIP 78085", "Praea Euq NW-W b1-3" ], "Discovered":[ "HIP 78085 A", "Praea Euq NW-W b1-3", "Praea Euq NW-W b1-3 3 a", "Praea Euq NW-W b1-3 3" ], "BaseValue":10822, "Bonus":3959 }
+
+// BuyExplorationData has System and Cost
+
 */
 	// MaterialCollected
 	if (!value.toString().compare("MaterialCollected", Qt::CaseInsensitive))
@@ -939,6 +935,21 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("PayFines, Amount: " + QString::number(value.toDouble()));
 	}
 
+	// ModuleStore
+	if (!value.toString().compare("ModuleStore", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Slot"));
+		ui->textEdit->append("ModuleStore, Slot: " + value.toString());
+		value = sett2.value(QString("StoredItem"));
+		ui->textEdit->append("-> StoredItem: " + value.toString());
+		value = sett2.value(QString("StoredItem_Localised"));
+		ui->textEdit->append("-> StoredItem_Localised: " + value.toString());
+		value = sett2.value(QString("Ship"));
+		ui->textEdit->append("-> Ship: " + value.toString());
+		value = sett2.value(QString("ShipID"));
+		ui->textEdit->append("-> ShipID: " + QString::number(value.toDouble()));
+	}
+
 	// MassModuleStore
 	if (!value.toString().compare("MassModuleStore", Qt::CaseInsensitive))
 	{
@@ -992,6 +1003,19 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("ShipyardNew, ShipType: " + value.toString());
 		value = sett2.value(QString("NewShipID"));
 		ui->textEdit->append("-> NewShipID: " + QString::number(value.toDouble()));
+	}
+
+	// ShipyardSell
+	if (!value.toString().compare("ShipyardSell", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("ShipType"));
+		ui->textEdit->append("ShipyardSell, ShipType: " + value.toString());
+		value = sett2.value(QString("SellShipID"));
+		ui->textEdit->append("-> SellShipID: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("ShipPrice"));
+		ui->textEdit->append("-> ShipPrice: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("System"));
+		ui->textEdit->append("-> System: " + value.toString());
 	}
 
 	// ShipyardSwap
@@ -1223,6 +1247,17 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("-> Type_Localised: " + value.toString());
 	}
 
+	// MaterialDiscovered
+	if (!value.toString().compare("MaterialDiscovered", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Category"));
+		ui->textEdit->append("MaterialDiscovered, Category: " + value.toString());
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("-> Name: " + value.toString());
+		value = sett2.value(QString("DiscoveryNumber"));
+		ui->textEdit->append("-> DiscoveryNumber: " + QString::number(value.toDouble()));
+	}
+
 	// Touchdown
 	if (!value.toString().compare("Touchdown", Qt::CaseInsensitive))
 	{
@@ -1267,6 +1302,40 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("-> IsPlayer: " + QString::number(value.toBool()));
 		value = sett2.value(QString("Faction"));
 		ui->textEdit->append("-> Faction: " + value.toString());
+	}
+
+	// EscapeInterdiction
+	if (!value.toString().compare("EscapeInterdiction", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Interdictor"));
+		ui->textEdit->append("EscapeInterdiction, Interdictor: " + value.toString());
+		value = sett2.value(QString("IsPlayer"));
+		ui->textEdit->append("-> IsPlayer: " + QString::number(value.toBool()));
+	}
+
+	/* this might be obsolete as I never seen it?
+	// interdiction
+	if (!value.toString().compare("interdiction", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Success"));
+		ui->textEdit->append("interdiction, Success: " + QString::number(value.toBool()));
+		value = sett2.value(QString("Interdicted"));
+		ui->textEdit->append("-> Interdicted: " + value.toString());
+		value = sett2.value(QString("IsPlayer"));
+		ui->textEdit->append("-> IsPlayer: " + QString::number(value.toBool()));
+		value = sett2.value(QString("CombatRank"));
+		ui->textEdit->append("-> CombatRank: " + QString::number(value.toDouble());
+	}
+*/
+	// FactionKillBond
+	if (!value.toString().compare("FactionKillBond", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Reward"));
+		ui->textEdit->append("FactionKillBond, Reward: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("AwardingFaction"));
+		ui->textEdit->append("-> AwardingFaction: " + value.toString());
+		value = sett2.value(QString("VictimFaction"));
+		ui->textEdit->append("-> VictimFaction: " + value.toString());
 	}
 
 	// ApproachSettlement
@@ -1318,6 +1387,41 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("-> Cost: " + QString::number(value.toDouble()));
 		value = sett2.value(QString("Bankrupt"));
 		ui->textEdit->append("-> Bankrupt: " + QString::number(value.toBool()));
+	}
+
+	// RestockVehicle
+	if (!value.toString().compare("RestockVehicle", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Type"));
+		ui->textEdit->append("RestockVehicle, Type: " + value.toString());
+		value = sett2.value(QString("Loadout"));
+		ui->textEdit->append("-> Loadout: " + value.toString());
+		value = sett2.value(QString("Cost"));
+		ui->textEdit->append("-> Cost: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("Count"));
+		ui->textEdit->append("-> Count: " + QString::number(value.toDouble()));
+	}
+
+	// CrewHire
+	if (!value.toString().compare("CrewHire", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("CrewHire, Name: " + value.toString());
+		value = sett2.value(QString("Faction"));
+		ui->textEdit->append("-> Faction: " + value.toString());
+		value = sett2.value(QString("Cost"));
+		ui->textEdit->append("-> Cost: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("CombatRank"));
+		ui->textEdit->append("-> CombatRank: " + QString::number(value.toDouble()));
+	}
+
+	// CrewAssign
+	if (!value.toString().compare("CrewAssign", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("CrewAssign, Name: " + value.toString());
+		value = sett2.value(QString("Role"));
+		ui->textEdit->append("-> Role: " + value.toString());
 	}
 }
 
