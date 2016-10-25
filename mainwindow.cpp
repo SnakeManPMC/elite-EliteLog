@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1 build 11";
+	eliteLogVersion = "v1.1";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -57,7 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	// then scan log directory for existing logs, extract system name which should be
 	// the same as returned from previous function
 	scanDirectoryLogs();
-	ui->textEdit->append("Welcome, current UTC time is: " + timeUTCtoString());
+	ui->textEdit->append("Greetings commander! Current UTC time is: " + timeUTCtoString());
+
+	// update GUI highscores and stuff
+	updateSystemsVisited();
 
 	// start the looping timer: void MainWindow::timerEvent(QTimerEvent *event)
 	// was 5000, but lets try 10000 (10sec) now
@@ -172,9 +175,7 @@ void MainWindow::saveEliteCFG()
 
 	out << logDirectory;
 	out << "\n";
-	out << numSessionSystemsRecord;
-	out << ",";
-	out << numSessionSystemsRecordDate;
+	out << numSessionSystemsRecord << "," << numSessionSystemsRecordDate;
 	out << "\n";
 	out << deaths;
 	out << "\n";
@@ -407,7 +408,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		{
 			JumpDistShortest = value.toDouble();
 			ui->textEdit->append("New shortest jump distance record!");
-			ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
+			updateSystemsVisited();
 			saveEliteCFG();
 		}
 		// new longest jump record
@@ -415,7 +416,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		{
 			JumpDistLongest = value.toDouble();
 			ui->textEdit->append("New longest jump distance record!");
-			ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
+			updateSystemsVisited();
 			saveEliteCFG();
 		}
 
@@ -548,7 +549,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				stellarMassLowest = value.toDouble();
 				ui->textEdit->append("New stellarMass highscore LOWEST!");
-				ui->StarMassRecords->setText("Star mass lowest: " + QString::number(stellarMassLowest) + ", highest: " + QString::number(stellarMassHighest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// stellarMass highest highscore
@@ -556,7 +557,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				stellarMassHighest = value.toDouble();
 				ui->textEdit->append("New stellarMass highscore HIGHEST!");
-				ui->StarMassRecords->setText("Star mass lowest: " + QString::number(stellarMassLowest) + ", highest: " + QString::number(stellarMassHighest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			ui->textEdit->append("StellarMass: " + QString::number(value.toDouble()));
@@ -567,7 +568,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				stellarRadiusSmallest = value.toDouble();
 				ui->textEdit->append("New stellar radius smallest highscore!");
-				ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// stellar radius largest highscore
@@ -575,7 +576,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				stellarRadiusLargest = value.toDouble();
 				ui->textEdit->append("New stellar radius largest highscore!");
-				ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
@@ -630,7 +631,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				DistanceFromArrivalLSMin = value.toDouble();
 				ui->textEdit->append("New DistanceFromArrivalLSMin highscore! " + QString::number(DistanceFromArrivalLSMin));
-				ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// new maximum LS highscore
@@ -638,7 +639,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				DistanceFromArrivalLSMax = value.toDouble();
 				ui->textEdit->append("New DistanceFromArrivalLSMax highscore! " + QString::number(DistanceFromArrivalLSMax));
-				ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toDouble()));
@@ -672,7 +673,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				planetRadiusSmallest = value.toDouble();
 				ui->textEdit->append("New highscore planet radius SMALLEST! " + QString::number(planetRadiusSmallest / 1000));
-				ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// planet radius largest highscore
@@ -680,7 +681,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				planetRadiusLargest = value.toDouble();
 				ui->textEdit->append("New highscore planet radius LARGEST! " + QString::number(planetRadiusLargest / 1000));
-				ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			ui->textEdit->append("Radius: " + QString::number(value.toDouble()));
@@ -691,7 +692,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				surfaceGravityLowest = value.toDouble();
 				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest));
-				ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// planet gravity highest highscore
@@ -699,7 +700,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			{
 				surfaceGravityHighest = value.toDouble();
 				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest));
-				ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
+				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toDouble()));
@@ -900,6 +901,13 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("-> Victim_Localised: " + value.toString());
 	}
 
+	/*
+this is old code, please fix with new journal:
+{ "timestamp":"2016-10-24T18:40:07Z", "event":"Bounty", "Rewards":[ { "Faction":"Surya PLC", "Reward":2400 }, { "Faction":"Federation", "Reward":98820 } ], "TotalReward":101220, "VictimFaction":"Surya Jet Drug Empire" }
+{ "timestamp":"2016-10-24T18:41:01Z", "event":"Bounty", "Rewards":[ { "Faction":"Surya PLC", "Reward":26537 } ], "TotalReward":26537, "VictimFaction":"Felicia Winters" }
+{ "timestamp":"2016-10-24T18:42:02Z", "event":"Bounty", "Rewards":[ { "Faction":"Surya PLC", "Reward":400 }, { "Faction":"Federation", "Reward":46882 } ], "TotalReward":47282, "VictimFaction":"Surya Jet Drug Empire" }
+{ "timestamp":"2016-10-24T18:46:54Z", "event":"Bounty", "Rewards":[ { "Faction":"Surya PLC", "Reward":1200 }, { "Faction":"Federation", "Reward":62955 } ], "TotalReward":64155, "VictimFaction":"Surya Confederacy" }
+	 */
 	// Bounty
 	if (!value.toString().compare("Bounty", Qt::CaseInsensitive))
 	{
@@ -1423,9 +1431,60 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("Role"));
 		ui->textEdit->append("-> Role: " + value.toString());
 	}
+
+	// ClearSavedGame
+	if (!value.toString().compare("ClearSavedGame", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("ClearSavedGame, Name: " + value.toString());
+	}
+
+	// NewCommander
+	if (!value.toString().compare("NewCommander", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("NewCommander, Name: " + value.toString());
+		value = sett2.value(QString("Package"));
+		ui->textEdit->append("-> Package: " + value.toString());
+	}
+
+	// MissionAccepted
+	if (!value.toString().compare("MissionAccepted", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Faction"));
+		ui->textEdit->append("MissionAccepted, Faction: " + value.toString());
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("-> Name: " + value.toString());
+		value = sett2.value(QString("DestinationSystem"));
+		ui->textEdit->append("-> DestinationSystem: " + value.toString());
+		value = sett2.value(QString("DestinationStation"));
+		ui->textEdit->append("-> DestinationStation: " + value.toString());
+		value = sett2.value(QString("Expiry"));
+		ui->textEdit->append("-> Expiry: " + value.toString());
+		value = sett2.value(QString("MissionID"));
+		ui->textEdit->append("-> MissionID: " + QString::number(value.toDouble()));
+	}
+
+	// MissionCompleted
+	if (!value.toString().compare("MissionCompleted", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Faction"));
+		ui->textEdit->append("MissionCompleted, Faction: " + value.toString());
+		value = sett2.value(QString("Name"));
+		ui->textEdit->append("-> Name: " + value.toString());
+		value = sett2.value(QString("MissionID"));
+		ui->textEdit->append("-> MissionID: " + QString::number(value.toDouble()));
+		value = sett2.value(QString("DestinationSystem"));
+		ui->textEdit->append("-> DestinationSystem: " + value.toString());
+		value = sett2.value(QString("DestinationStation"));
+		ui->textEdit->append("-> DestinationStation: " + value.toString());
+		value = sett2.value(QString("Reward"));
+		ui->textEdit->append("-> Reward: " + QString::number(value.toDouble()));
+	}
 }
 
 
+// obsolete with new v2.2 Journal stuff
 // extracts the actual star system name from last system: entry
 QString MainWindow::extractSystemName(QString line)
 {
@@ -1446,6 +1505,7 @@ QString MainWindow::extractSystemName(QString line)
 }
 
 
+// obsolete with new v2.2 Journal stuff
 QString MainWindow::extractStationName(QString line)
 {
 	QString final;
@@ -1647,8 +1707,17 @@ void MainWindow::updateSystemsVisited()
 	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord)
 					 + " at " + numSessionSystemsRecordDate);
 	ui->totalSystemsVisited->setText("Total Systems: " + QString::number(numAllSystems));
+
 	// this doesnt need to be here, but I dont know where else
 	// will it be updated on program start?
 	ui->Deaths->setText("CMDR Deaths: " + QString::number(deaths));
 	ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal));
+
+	// lets just damn update everything here :)
+	ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
+	ui->StarMassRecords->setText("Star mass lowest: " + QString::number(stellarMassLowest) + ", highest: " + QString::number(stellarMassHighest));
+	ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
+	ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
+	ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
+	ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
 }
