@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>720</height>
+    <width>516</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@
     <item>
      <widget class="QLabel" name="FuelScoopedTotal">
       <property name="text">
-       <string>Fuel scooped: 0</string>
+       <string>Fuel scooped: 0, lowest fuel level reached: 0</string>
       </property>
      </widget>
     </item>
@@ -114,12 +114,23 @@
      </widget>
     </item>
     <item>
-     <widget class="QCheckBox" name="IgnoreTraining">
+     <widget class="QLabel" name="LandableRadiusRecords">
       <property name="text">
-       <string>IgnoreTraining</string>
+       <string>Landable Planet Smallest: -, largest: -</string>
       </property>
-      <property name="checked">
-       <bool>true</bool>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="LandableGravityRecords">
+      <property name="text">
+       <string>Landable gravity lowest: -, highest: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="Age_MYRecords">
+      <property name="text">
+       <string>Star youngest: -, oldest: -</string>
       </property>
      </widget>
     </item>
@@ -127,6 +138,16 @@
      <widget class="QCheckBox" name="SysNamAutoClipboard">
       <property name="text">
        <string>System name auto clipboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="IgnoreTraining">
+      <property name="text">
+       <string>IgnoreTraining</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -161,7 +182,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>700</width>
+     <width>516</width>
      <height>18</height>
     </rect>
    </property>

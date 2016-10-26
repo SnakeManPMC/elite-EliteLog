@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->setupUi(this);
 
 	// our softwares version
-	eliteLogVersion = "v1.1";
+	eliteLogVersion = "v1.1.1";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -155,6 +155,26 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	stellarRadiusLargest = tmp.toDouble(&ok);
 
+	// landable planet smallest
+	tmp = in.readLine();
+	landableRadiusSmallest = tmp.toDouble(&ok);
+
+	// landable planet largest
+	tmp = in.readLine();
+	landableRadiusLargest = tmp.toDouble(&ok);
+
+	// landable gravity lowest
+	tmp = in.readLine();
+	landableGravityLowest = tmp.toDouble(&ok);
+
+	// landable gravity highest
+	tmp = in.readLine();
+	landableGravityHighest = tmp.toDouble(&ok);
+
+	// fuel level lowest
+	tmp = in.readLine();
+	fuelLevelLowest = tmp.toDouble(&ok);
+
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
@@ -204,6 +224,40 @@ void MainWindow::saveEliteCFG()
 	out << stellarRadiusSmallest;
 	out << "\n";
 	out << stellarRadiusLargest;
+	out << "\n";
+	out << landableRadiusSmallest;
+	out << "\n";
+	out << landableRadiusLargest;
+	out << "\n";
+	out << landableGravityLowest;
+	out << "\n";
+	out << landableGravityHighest;
+	out << "\n";
+	out << fuelLevelLowest;
+
+	// some comments for easier elitelog.cfg reading
+	out << "\n\nEliteLog.cfg line descriptions:\n";
+	out << "1: Journal log directory\n";
+	out << "2: Number of session system jumps high score + UTC date\n";
+	out << "3: CMDR deaths\n";
+	out << "4: Fueld scooped total\n";
+	out << "5: Jump distance shortest\n";
+	out << "6: Jump distance longest\n";
+	out << "7: Planet LS shortest\n";
+	out << "8: Planet LS longest\n";
+	out << "9: Planet radius smallest\n";
+	out << "10: Planet radius largest\n";
+	out << "11: Planet surface gravity lowest\n";
+	out << "12: Planet surface gravity highest\n";
+	out << "13: Stellar mass lowest\n";
+	out << "14: Stellar mass highest\n";
+	out << "15: Stellar radius smallest\n";
+	out << "16: Stellar radius largest\n";
+	out << "17: Landable planet smallest\n";
+	out << "18: Landable planet largest\n";
+	out << "19: Landable gravity lowest\n";
+	out << "20: Landable gravity highest\n";
+	out << "21: Fuel level lowest";
 
 	file.close();
 }
@@ -430,6 +484,14 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("FuelLevel"));
 		//qDebug() << value;
 		FuelLevel = value.toDouble();
+		// we have reached lowest fuel level ever!
+		if (fuelLevelLowest > value.toDouble())
+		{
+			fuelLevelLowest = value.toDouble();
+			ui->textEdit->append("Come on Maverick we're running on fumes! Lets land this sucker! Lowest fuel level record!");
+			updateSystemsVisited();
+			saveEliteCFG();
+		}
 		ui->textEdit->append("FuelUsed: " + QString::number(sett2.value(QString("FuelUsed")).toDouble()) + ", FuelLevel: " + QString::number(sett2.value(QString("FuelLevel")).toDouble()));
 	}
 
@@ -587,6 +649,22 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 			// Age_MY
 			value = sett2.value(QString("Age_MY"));
+			// star age youngest highscore
+			if (age_MYyoungest > value.toDouble())
+			{
+				age_MYyoungest = value.toDouble();
+				ui->textEdit->append("New star youngest highscore!");
+				updateSystemsVisited();
+				saveEliteCFG();
+			}
+			// star age oldest highscore
+			if (age_MYoldest > value.toDouble())
+			{
+				age_MYoldest = value.toDouble();
+				ui->textEdit->append("New star oldest highscore!");
+				updateSystemsVisited();
+				saveEliteCFG();
+			}
 			ui->textEdit->append("Age_MY: " + QString::number(value.toDouble()));
 
 			// SurfaceTemperature
@@ -691,7 +769,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityLowest > value.toDouble())
 			{
 				surfaceGravityLowest = value.toDouble();
-				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest));
+				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 100));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -699,11 +777,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityHighest < value.toDouble())
 			{
 				surfaceGravityHighest = value.toDouble();
-				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest));
+				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 100));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toDouble()));
+			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toDouble() / 100));
 
 			value = sett2.value(QString("SurfaceTemperature"));
 			ui->textEdit->append("SurfaceTemperature: " + QString::number(value.toDouble()));
@@ -714,6 +792,49 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("Landable"));
 			//qDebug() << "Landable: " << value;
 			ui->textEdit->append("Landable: " + QString::number(value.toBool()));
+
+			// ugly shuffle for landable planet highscores
+			if (value.toBool())
+			{
+				// we have landabale planet
+				// do some highscores specifically for landables, ie smallest, largest radius
+				value = sett2.value(QString("Radius"));
+				// planet radius smallest highscore
+				if (landableRadiusSmallest > value.toDouble())
+				{
+					landableRadiusSmallest = value.toDouble();
+					ui->textEdit->append("New highscore *landable* planet radius SMALLEST! " + QString::number(landableRadiusSmallest / 1000));
+					updateSystemsVisited();
+					saveEliteCFG();
+				}
+				// planet radius largest highscore
+				if (landableRadiusLargest < value.toDouble())
+				{
+					landableRadiusLargest = value.toDouble();
+					ui->textEdit->append("New highscore *landable* planet radius LARGEST! " + QString::number(landableRadiusLargest / 1000));
+					updateSystemsVisited();
+					saveEliteCFG();
+				}
+
+				value = sett2.value(QString("SurfaceGravity"));
+				// planet gravity lowest highscore
+				if (landableGravityLowest > value.toDouble())
+				{
+					landableGravityLowest = value.toDouble();
+					ui->textEdit->append("New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 100));
+					updateSystemsVisited();
+					saveEliteCFG();
+				}
+				// planet gravity highest highscore
+				if (landableGravityHighest < value.toDouble())
+				{
+					landableGravityHighest = value.toDouble();
+					ui->textEdit->append("New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 100));
+					updateSystemsVisited();
+					saveEliteCFG();
+				}
+				ui->textEdit->append("landableGravity: " + QString::number(value.toDouble() / 100));
+			}
 
 			// SemiMajorAxis
 			value = sett2.value(QString("SemiMajorAxis"));
@@ -1711,7 +1832,7 @@ void MainWindow::updateSystemsVisited()
 	// this doesnt need to be here, but I dont know where else
 	// will it be updated on program start?
 	ui->Deaths->setText("CMDR Deaths: " + QString::number(deaths));
-	ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal));
+	ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal) + ", lowest fuel level reached: " + QString::number(fuelLevelLowest));
 
 	// lets just damn update everything here :)
 	ui->JumpDistanceRecords->setText("Jump distance shortest: " + QString::number(JumpDistShortest) + ", longest: " + QString::number(JumpDistLongest));
@@ -1719,5 +1840,8 @@ void MainWindow::updateSystemsVisited()
 	ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
 	ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
 	ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
-	ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest) + ", highest: " + QString::number(surfaceGravityHighest));
+	ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest / 100) + ", highest: " + QString::number(surfaceGravityHighest / 100));
+	ui->LandableRadiusRecords->setText("Landable Planet radius smallest: " + QString::number(landableRadiusSmallest / 1000) + ", largest: " + QString::number(landableRadiusLargest / 1000));
+	ui->LandableGravityRecords->setText("Landable Planet gravity lowest: " + QString::number(landableGravityLowest / 100) + ", highest: " + QString::number(landableGravityHighest / 100));
+	ui->Age_MYRecords->setText("Star youngest: " + QString::number(age_MYyoungest) + ", oldest: " + QString::number(age_MYoldest));
 }
