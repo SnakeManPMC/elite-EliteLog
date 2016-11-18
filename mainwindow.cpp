@@ -31,8 +31,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	setupTableWidget();
+
 	// our softwares version
-	eliteLogVersion = "v1.1.1";
+	eliteLogVersion = "v1.1.5";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -73,6 +75,36 @@ MainWindow::~MainWindow()
 	killTimer(timerId);
 	delete ui;
 }
+
+
+void MainWindow::setupTableWidget()
+{
+	ui->tableWidget->setColumnCount(3);
+	QStringList header;
+	header << "UTC" << "Event" << "Detais";
+	ui->tableWidget->setHorizontalHeaderLabels(header);
+
+	QHeaderView* trueheader = ui->tableWidget->horizontalHeader();
+	trueheader->setSectionResizeMode(QHeaderView::Fixed);
+	trueheader->resizeSection(0, 200);
+	trueheader->resizeSection(1, 150);
+	trueheader->resizeSection(2, 800);
+}
+
+
+void MainWindow::updateTableView(const QString& date, const QString& event, const QString& details)
+{
+	int num = ui->tableWidget->rowCount();
+
+	ui->tableWidget->insertRow(num);
+	ui->tableWidget->setItem(num, 0, new QTableWidgetItem(date));
+	ui->tableWidget->setItem(num, 1, new QTableWidgetItem(event));
+	ui->tableWidget->setItem(num, 2, new QTableWidgetItem(details));
+
+	// set focus on latest item added, ie bottom
+	ui->tableWidget->scrollToBottom();
+}
+
 
 void MainWindow::readEliteCFG()
 {
@@ -175,6 +207,14 @@ void MainWindow::readEliteCFG()
 	tmp = in.readLine();
 	fuelLevelLowest = tmp.toDouble(&ok);
 
+	// star age youngest
+	tmp = in.readLine();
+	age_MYyoungest = tmp.toDouble(&ok);
+
+	// star age oldest
+	tmp = in.readLine();
+	age_MYoldest = tmp.toDouble(&ok);
+
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
 }
@@ -234,6 +274,10 @@ void MainWindow::saveEliteCFG()
 	out << landableGravityHighest;
 	out << "\n";
 	out << fuelLevelLowest;
+	out << "\n";
+	out << age_MYyoungest;
+	out << "\n";
+	out << age_MYoldest;
 
 	// some comments for easier elitelog.cfg reading
 	out << "\n\nEliteLog.cfg line descriptions:\n";
@@ -257,7 +301,9 @@ void MainWindow::saveEliteCFG()
 	out << "18: Landable planet largest\n";
 	out << "19: Landable gravity lowest\n";
 	out << "20: Landable gravity highest\n";
-	out << "21: Fuel level lowest";
+	out << "21: Fuel level lowest\n";
+	out << "22: Star age youngest\n";
+	out << "23: Star age oldest\n";
 
 	file.close();
 }
@@ -426,33 +472,33 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				     QString::number(value.toArray().at(1).toDouble()) + "," +
 				     QString::number(value.toArray().at(2).toDouble()) + "]");
 
-		// Allegiance
-		value = sett2.value(QString("Allegiance"));
-		ui->textEdit->append("Allegiance: " + value.toString());
+		// SystemAllegiance
+		value = sett2.value(QString("SystemAllegiance"));
+		ui->textEdit->append("SystemAllegiance: " + value.toString());
 
-		// Economy
-		value = sett2.value(QString("Economy"));
-		ui->textEdit->append("Economy: " + value.toString());
+		// SystemEconomy
+		value = sett2.value(QString("SystemEconomy"));
+		ui->textEdit->append("SystemEconomy: " + value.toString());
 
-		// Economy_Localised
-		value = sett2.value(QString("Economy_Localised"));
-		ui->textEdit->append("Economy_Localised: " + value.toString());
+		// SystemEconomy_Localised
+		value = sett2.value(QString("SystemEconomy_Localised"));
+		ui->textEdit->append("SystemEconomy_Localised: " + value.toString());
 
-		// Government
-		value = sett2.value(QString("Government"));
-		ui->textEdit->append("Government: " + value.toString());
+		// SystemGovernment
+		value = sett2.value(QString("SystemGovernment"));
+		ui->textEdit->append("SystemGovernment: " + value.toString());
 
-		// Government_Localised
-		value = sett2.value(QString("Government_Localised"));
-		ui->textEdit->append("Government_Localised: " + value.toString());
+		// SystemGovernment_Localised
+		value = sett2.value(QString("SystemGovernment_Localised"));
+		ui->textEdit->append("SystemGovernment_Localised: " + value.toString());
 
-		// Security
-		value = sett2.value(QString("Security"));
-		ui->textEdit->append("Security: " + value.toString());
+		// SystemSecurity
+		value = sett2.value(QString("SystemSecurity"));
+		ui->textEdit->append("SystemSecurity: " + value.toString());
 
-		// Security_Localised
-		value = sett2.value(QString("Security_Localised"));
-		ui->textEdit->append("Security_Localised: " + value.toString());
+		// SystemSecurity_Localised
+		value = sett2.value(QString("SystemSecurity_Localised"));
+		ui->textEdit->append("SystemSecurity_Localised: " + value.toString());
 
 		value = sett2.value(QString("JumpDist"));
 		//qDebug() << value;
@@ -480,6 +526,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("FuelUsed"));
 		//qDebug() << value;
 		FuelUsed = value.toDouble();
+
+		// tableview shizzle
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "Jump to System";
+		tdetails = (MySystem + ", Jump distance: " + QString::number(sett2.value(QString("JumpDist")).toDouble()) + "Ly, Fuel used: " + QString::number(sett2.value(QString("FuelUsed")).toDouble()));
+		updateTableView(ttime, tevent, tdetails);
 
 		value = sett2.value(QString("FuelLevel"));
 		//qDebug() << value;
@@ -509,6 +561,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->StationName->setText("Station: " + MyStation);
 
 		// missing lot of stuff now, Location is very similar to FSDJump ...
+
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "Location in System";
+		tdetails = MySystem;
+		updateTableView(ttime, tevent, tdetails);
 	}
 
 	/*
@@ -595,6 +652,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		// if its a STAR it includes StarType value
 		if (sett2.contains("StarType"))
 		{
+			ttime = sett2.value(QString("timestamp")).toString();
+			tevent = "Scan: Star";
+			tdetails = (sett2.value(QString("BodyName")).toString() + ", Type: " + sett2.value(QString("StarType")).toString() +
+				    ", Age: " + QString::number(sett2.value(QString("Age_MY")).toDouble()));
+			updateTableView(ttime, tevent, tdetails);
+
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> StarType DETECTED! ***");
 			value = sett2.value(QString("BodyName"));
 			ui->textEdit->append("BodyName: " + value.toString());
@@ -658,7 +721,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				saveEliteCFG();
 			}
 			// star age oldest highscore
-			if (age_MYoldest > value.toDouble())
+			if (age_MYoldest < value.toDouble())
 			{
 				age_MYoldest = value.toDouble();
 				ui->textEdit->append("New star oldest highscore!");
@@ -699,6 +762,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		// if its a PLANET it includes PlanetClass
 		if (sett2.contains("PlanetClass"))
 		{
+			ttime = sett2.value(QString("timestamp")).toString();
+			tevent = "Scan: Planet";
+			tdetails = sett2.value(QString("BodyName")).toString();
+			tdetails.append(", Class: " + sett2.value(QString("PlanetClass")).toString());
+			updateTableView(ttime, tevent, tdetails);
+
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> PlanetClass DETECTED! ***");
 			value = sett2.value(QString("BodyName"));
 			ui->textEdit->append("BodyName: " + value.toString());

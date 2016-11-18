@@ -45,6 +45,10 @@ private:
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
+	void setupTableWidget();
+	void updateTableView(const QString& date, const QString& event, const QString& details);
+	QString ttime, tevent, tdetails;
+
 protected:
 	void timerEvent(QTimerEvent *event);
 private slots:
