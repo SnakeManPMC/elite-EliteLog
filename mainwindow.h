@@ -36,12 +36,12 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,fuelLevelLowest;
-	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
-	double planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
-	double landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
-	double stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
-	double age_MYyoungest,age_MYoldest;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
+	float scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
+	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
+	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
+	float stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
+	float age_MYyoungest,age_MYoldest,fuelLevelLowest;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
