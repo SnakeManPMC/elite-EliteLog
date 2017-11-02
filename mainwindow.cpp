@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.1.6";
+	eliteLogVersion = "v1.1.7";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -529,7 +529,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		//qDebug() << value;
 		FuelUsed = value.toVariant().toFloat();
 
-		// tableview shizzle
+		// tableview jump to system
 		ttime = sett2.value(QString("timestamp")).toString();
 		tevent = "Jump to System";
 		tdetails = (MySystem + ", Jump distance: " + QString::number(sett2.value(QString("JumpDist")).toVariant().toFloat()) + "Ly, Fuel used: " + QString::number(sett2.value(QString("FuelUsed")).toVariant().toFloat()));
@@ -626,6 +626,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		value = sett2.value(QString("StationType"));
 		ui->textEdit->append("StationType: " + value.toString());
+
+		// tableview docked to station
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "Docked to Station";
+		tdetails = (MyStation + " at " + MySystem);
+		updateTableView(ttime, tevent, tdetails);
 	}
 
 	// Undocked
@@ -637,6 +643,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->StationName->setText("Station: " + MyStation);
 		value = sett2.value(QString("StationType"));
 		ui->textEdit->append("StationType: " + value.toString());
+
+		// tableview undocked from station
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "Undocked from Station";
+		tdetails = (MyStation + " at " + MySystem);
+		updateTableView(ttime, tevent, tdetails);
 	}
 
 	// Died
