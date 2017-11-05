@@ -777,10 +777,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		if (sett2.contains("PlanetClass"))
 		{
 			ttime = sett2.value(QString("timestamp")).toString();
+
+			// for tableview
 			tevent = "Scan: Planet";
 			tdetails = sett2.value(QString("BodyName")).toString();
 			tdetails.append(", Class: " + sett2.value(QString("PlanetClass")).toString());
-			updateTableView(ttime, tevent, tdetails);
 
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> PlanetClass DETECTED! ***");
 			value = sett2.value(QString("BodyName"));
@@ -848,6 +849,13 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("Radius: " + QString::number(value.toVariant().toFloat()));
 
 			value = sett2.value(QString("SurfaceGravity"));
+
+			// gravity added to tableview details
+			tdetails.append(", " + QString::number(value.toVariant().toFloat() / 100) + "G");
+
+			// we have all the data we need, lets update
+			updateTableView(ttime, tevent, tdetails);
+
 			// planet gravity lowest highscore
 			if (surfaceGravityLowest > value.toVariant().toFloat())
 			{
