@@ -89,6 +89,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="SessionSpecialPlanets">
+      <property name="text">
+       <string>Session Ammonia / Earthlike / Water Worlds</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="Deaths">
       <property name="text">
        <string>CMDR Deaths: -</string>

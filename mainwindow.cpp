@@ -34,14 +34,20 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2";
+	eliteLogVersion = "v1.2.2";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
+	// initialize some variables
 	savedHammers = 0;
 	filePos = 0;
 	numSessionSystems = 0;
 	numSessionScans = 0;
+	numSessionAmmonia = 0;
+	numSessionEarth = 0;
+	numSessionWater = 0;
 	numAllSystems = 0;
+	sessionPlanetLargest = 0;
+	sessionPlanetSmallest = 9999999;
 	cmdrLogFileName = "EliteLog.log";
 
 	readEliteCFG();
@@ -665,6 +671,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		numSessionScans++;
 
 		ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
+
 		// if its a STAR it includes StarType value
 		if (sett2.contains("StarType"))
 		{
@@ -780,33 +787,37 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		{
 			ttime = sett2.value(QString("timestamp")).toString();
 
+			QString pmcBodyName = sett2.value(QString("BodyName")).toString();
+			QString pmcPlanetClass = sett2.value(QString("PlanetClass")).toString();
+
 			// for tableview
 			tevent = "Scan: Planet";
-			tdetails = sett2.value(QString("BodyName")).toString();
-			tdetails.append(", Class: " + sett2.value(QString("PlanetClass")).toString());
+			tdetails = pmcBodyName;
+			tdetails.append(", Class: " + pmcPlanetClass);
 
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> PlanetClass DETECTED! ***");
 			value = sett2.value(QString("BodyName"));
 			ui->textEdit->append("BodyName: " + value.toString());
 
 			value = sett2.value(QString("DistanceFromArrivalLS"));
+			float pmcDistanceLS = value.toVariant().toFloat();
 			// new minimum LS highscore
-			if (DistanceFromArrivalLSMin > value.toVariant().toFloat())
+			if (DistanceFromArrivalLSMin > pmcDistanceLS)
 			{
-				DistanceFromArrivalLSMin = value.toVariant().toFloat();
+				DistanceFromArrivalLSMin = pmcDistanceLS;
 				ui->textEdit->append("New DistanceFromArrivalLSMin highscore! " + QString::number(DistanceFromArrivalLSMin));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// new maximum LS highscore
-			if (DistanceFromArrivalLSMax < value.toVariant().toFloat())
+			if (DistanceFromArrivalLSMax < pmcDistanceLS)
 			{
-				DistanceFromArrivalLSMax = value.toVariant().toFloat();
+				DistanceFromArrivalLSMax = pmcDistanceLS;
 				ui->textEdit->append("New DistanceFromArrivalLSMax highscore! " + QString::number(DistanceFromArrivalLSMax));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(pmcDistanceLS));
 
 			value = sett2.value(QString("TidalLock"));
 			//qDebug() << "TidalLock: " << value;
@@ -814,7 +825,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 			value = sett2.value(QString("TerraformState"));
 			//qDebug() << "TerraformState: " << value;
-			ui->textEdit->append("TerraformState: " + value.toString());
+			QString pmcTerraformState = value.toString();
+			ui->textEdit->append("TerraformState: " + pmcTerraformState);
 
 			// terraformstate just displayed as string, no formatting needed
 			if (value.toString().size() > 0)
@@ -822,8 +834,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				tdetails.append(", " + value.toString());
 			}
 
-			value = sett2.value(QString("PlanetClass"));
-			ui->textEdit->append("PlanetClass: " + value.toString());
+			ui->textEdit->append("PlanetClass: " + pmcPlanetClass);
 
 			value = sett2.value(QString("Atmosphere"));
 			//qDebug() << "Atmosphere: " << value;
@@ -838,36 +849,37 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 			// radius in JSON is in METERS, so divide by 1000 to get kilometers
 			value = sett2.value(QString("Radius"));
+			float pmcRadius = value.toVariant().toFloat();
 			// radius added to tableview details
-			tdetails.append(", Radius: " + QString::number(value.toVariant().toFloat() / 1000) + " meters");
+			tdetails.append(", Radius: " + QString::number(pmcRadius / 1000) + " meters");
 			
 			// planet radius smallest highscore
-			if (planetRadiusSmallest > value.toVariant().toFloat())
+			if (planetRadiusSmallest > pmcRadius)
 			{
-				planetRadiusSmallest = value.toVariant().toFloat();
+				planetRadiusSmallest = pmcRadius;
 				ui->textEdit->append("New highscore planet radius SMALLEST! " + QString::number(planetRadiusSmallest / 1000));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// planet radius largest highscore
-			if (planetRadiusLargest < value.toVariant().toFloat())
+			if (planetRadiusLargest < pmcRadius)
 			{
-				planetRadiusLargest = value.toVariant().toFloat();
+				planetRadiusLargest = pmcRadius;
 				ui->textEdit->append("New highscore planet radius LARGEST! " + QString::number(planetRadiusLargest / 1000));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("Radius: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Radius: " + QString::number(pmcRadius));
 
 			// same as above but only for current session
-			if (sessionPlanetSmallest > value.toVariant().toFloat())
+			if (sessionPlanetSmallest > pmcRadius)
 			{
-				sessionPlanetSmallest = value.toVariant().toFloat();
+				sessionPlanetSmallest = pmcRadius;
 				updateSystemsVisited();
 			}
-			if (sessionPlanetLargest < value.toVariant().toFloat())
+			if (sessionPlanetLargest < pmcRadius)
 			{
-				sessionPlanetLargest = value.toVariant().toFloat();
+				sessionPlanetLargest = pmcRadius;
 				updateSystemsVisited();
 			}
 
@@ -989,6 +1001,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				matValue = iter.value().toVariant().toFloat();
 				ui->textEdit->append(matName + ", " + QString::number(matValue));
 			}
+
+			// if we have special planet we write it to specific txt file
+			if (pmcPlanetClass.contains("Ammonia world") || pmcPlanetClass.contains("Earthlike body") || pmcPlanetClass.contains("Water world")) addSpecialPlanets(pmcPlanetClass, pmcBodyName, pmcDistanceLS, pmcRadius);
 
 			// we have all the data we need, lets update
 			updateTableView(ttime, tevent, tdetails);
@@ -1960,6 +1975,7 @@ void MainWindow::updateSystemsVisited()
 	ui->Age_MYRecords->setText("Star youngest: " + QString::number(age_MYyoungest) + ", oldest: " + QString::number(age_MYoldest));
 	ui->SessionScans->setText("Session Scans: " + QString::number(numSessionScans));
 	ui->SessionPlanets->setText("Session Planets: smallest: " + QString::number(sessionPlanetSmallest / 1000) + ", largest: " + QString::number(sessionPlanetLargest / 1000));
+	ui->SessionSpecialPlanets->setText("Session special planets: ammonia: " + QString::number(numSessionAmmonia) + ", earthlike: " + QString::number(numSessionEarth) + ", water: " + QString::number(numSessionWater));
 }
 
 
@@ -1968,4 +1984,45 @@ void MainWindow::on_pushButton_UTCArrivedAtSystem_clicked()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(timeUTCtoString() + " arrived at " + MySystem + " system");
+}
+
+
+void MainWindow::addSpecialPlanets(QString planetClass, QString bodyname, float distanceLS, float radius)
+{
+	// if we have special planet we write it to specific txt file
+
+	// whats this blah stuff, seriously heh dude is having a brain fart but I just wanted to get it working and to play elite as quick as possible :)
+	QString blah;
+	if (planetClass.contains("Ammonia world"))
+	{
+		blah = "planets_ammonia.txt";
+		numSessionAmmonia++;
+	}
+	if (planetClass.contains("Earthlike body"))
+	{
+		blah = "planets_earthlike.txt";
+		numSessionEarth++;
+	}
+	if (planetClass.contains("Water world"))
+	{
+		blah = "planets_water.txt";
+		numSessionWater++;
+	}
+
+	QFile planetsFile (blah);
+
+	if (!planetsFile.open(QIODevice::Append))
+	{
+		QMessageBox::information(this, tr("Unable to open planets text file file for writing"),
+		planetsFile.errorString());
+		return;
+	}
+
+	QTextStream in(&planetsFile);
+
+	in << timeUTCtoString() << "," << bodyname << "," << QString::number(distanceLS) << "," << QString::number(radius / 1000) << "\n";
+	planetsFile.close();
+
+	// update GUI as we have new special planets counts to list
+	updateSystemsVisited();
 }

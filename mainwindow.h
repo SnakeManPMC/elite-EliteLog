@@ -36,7 +36,7 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater;
 	float scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
@@ -48,6 +48,7 @@ private:
 	void setupTableWidget();
 	void updateTableView(const QString& date, const QString& event, const QString& details);
 	QString ttime, tevent, tdetails;
+	void addSpecialPlanets(QString planetClass, QString bodyname, float distancels, float radius);
 
 protected:
 	void timerEvent(QTimerEvent *event);
