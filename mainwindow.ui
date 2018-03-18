@@ -82,6 +82,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="SessionPlanets">
+      <property name="text">
+       <string>Session Planet: xxx</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="Deaths">
       <property name="text">
        <string>CMDR Deaths: -</string>

@@ -817,7 +817,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("TerraformState: " + value.toString());
 
 			// terraformstate just displayed as string, no formatting needed
-			if (!value.toString().isNull())
+			if (value.toString().size() > 0)
 			{
 				tdetails.append(", " + value.toString());
 			}
@@ -858,6 +858,18 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				saveEliteCFG();
 			}
 			ui->textEdit->append("Radius: " + QString::number(value.toVariant().toFloat()));
+
+			// same as above but only for current session
+			if (sessionPlanetSmallest > value.toVariant().toFloat())
+			{
+				sessionPlanetSmallest = value.toVariant().toFloat();
+				updateSystemsVisited();
+			}
+			if (sessionPlanetLargest < value.toVariant().toFloat())
+			{
+				sessionPlanetLargest = value.toVariant().toFloat();
+				updateSystemsVisited();
+			}
 
 			value = sett2.value(QString("SurfaceGravity"));
 
@@ -1946,7 +1958,8 @@ void MainWindow::updateSystemsVisited()
 	ui->LandableRadiusRecords->setText("Landable Planet radius smallest: " + QString::number(landableRadiusSmallest / 1000) + ", largest: " + QString::number(landableRadiusLargest / 1000));
 	ui->LandableGravityRecords->setText("Landable Planet gravity lowest: " + QString::number(landableGravityLowest / 100) + ", highest: " + QString::number(landableGravityHighest / 100));
 	ui->Age_MYRecords->setText("Star youngest: " + QString::number(age_MYyoungest) + ", oldest: " + QString::number(age_MYoldest));
-    ui->SessionScans->setText("Session Scans: " + QString::number(numSessionScans));
+	ui->SessionScans->setText("Session Scans: " + QString::number(numSessionScans));
+	ui->SessionPlanets->setText("Session Planets: smallest: " + QString::number(sessionPlanetSmallest / 1000) + ", largest: " + QString::number(sessionPlanetLargest / 1000));
 }
 
 
