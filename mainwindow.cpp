@@ -34,13 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-    eliteLogVersion = "v1.1.9";
+	eliteLogVersion = "v1.2";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
 	filePos = 0;
 	numSessionSystems = 0;
-    numSessionScans = 0;
+	numSessionScans = 0;
 	numAllSystems = 0;
 	cmdrLogFileName = "EliteLog.log";
 
@@ -471,9 +471,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		qDebug() << "value.toArray().at(0): " << value.toArray().at(0);
 		qDebug() << "value.toArray().at(0).toFloat(): " << value.toArray().at(0).toDouble();
 		*/
-		ui->textEdit->append("StarPos:[" + QString::number(value.toArray().at(0).toDouble()) + "," +
-				     QString::number(value.toArray().at(1).toDouble()) + "," +
-				     QString::number(value.toArray().at(2).toDouble()) + "]");
+		ui->textEdit->append("StarPos:[" + QString::number(value.toArray().at(0).toDouble()) + "," + QString::number(value.toArray().at(1).toDouble()) + "," + QString::number(value.toArray().at(2).toDouble()) + "]");
 
 		// SystemAllegiance
 		value = sett2.value(QString("SystemAllegiance"));
@@ -663,10 +661,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	// Scan (exploration object)
 	if (!value.toString().compare("Scan", Qt::CaseInsensitive))
 	{
-        // how many times we have scanned in this session
-        numSessionScans++;
+		// how many times we have scanned in this session
+		numSessionScans++;
 
-        ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
+		ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
 		// if its a STAR it includes StarType value
 		if (sett2.contains("StarType"))
 		{
@@ -779,7 +777,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		// if its a PLANET it includes PlanetClass
 		if (sett2.contains("PlanetClass"))
-        {
+		{
 			ttime = sett2.value(QString("timestamp")).toString();
 
 			// for tableview
@@ -818,6 +816,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			//qDebug() << "TerraformState: " << value;
 			ui->textEdit->append("TerraformState: " + value.toString());
 
+			// terraformstate just displayed as string, no formatting needed
+			if (!value.toString().isNull())
+			{
+				tdetails.append(", " + value.toString());
+			}
+
 			value = sett2.value(QString("PlanetClass"));
 			ui->textEdit->append("PlanetClass: " + value.toString());
 
@@ -834,10 +838,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 			// radius in JSON is in METERS, so divide by 1000 to get kilometers
 			value = sett2.value(QString("Radius"));
-            // radius added to tableview details
-            tdetails.append(", Radius: " + QString::number(value.toVariant().toFloat() / 1000) + " meters");
-
-            // planet radius smallest highscore
+			// radius added to tableview details
+			tdetails.append(", Radius: " + QString::number(value.toVariant().toFloat() / 1000) + " meters");
+			
+			// planet radius smallest highscore
 			if (planetRadiusSmallest > value.toVariant().toFloat())
 			{
 				planetRadiusSmallest = value.toVariant().toFloat();
@@ -927,9 +931,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				}
 				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toFloat() / 100));
 
-                // gravity added to tableview details
-                tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 100, 'f', 2) + " G");
-            }
+				// gravity added to tableview details
+				tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 100, 'f', 2) + " G");
+			}
 
 			// SemiMajorAxis
 			value = sett2.value(QString("SemiMajorAxis"));
@@ -974,9 +978,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				ui->textEdit->append(matName + ", " + QString::number(matValue));
 			}
 
-            // we have all the data we need, lets update
-            updateTableView(ttime, tevent, tdetails);
-        }
+			// we have all the data we need, lets update
+			updateTableView(ttime, tevent, tdetails);
+		}
 	}
 /*
 	// SellExplorationData
@@ -1945,8 +1949,10 @@ void MainWindow::updateSystemsVisited()
     ui->SessionScans->setText("Session Scans: " + QString::number(numSessionScans));
 }
 
+
+// used in our web sites exploration and other stories
 void MainWindow::on_pushButton_UTCArrivedAtSystem_clicked()
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(timeUTCtoString() + " arrived at " + MySystem + " system");
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(timeUTCtoString() + " arrived at " + MySystem + " system");
 }
