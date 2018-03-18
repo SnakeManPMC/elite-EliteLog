@@ -36,7 +36,7 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths;
+    int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans;
 	float scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
@@ -55,6 +55,7 @@ private slots:
 	void on_pushButton_clicked();
 	void on_pushButton_2_clicked();
 	void on_pushButton_3_clicked();
+    void on_pushButton_UTCArrivedAtSystem_clicked();
 };
 
 #endif // MAINWINDOW_H

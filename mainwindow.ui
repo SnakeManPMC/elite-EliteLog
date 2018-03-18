@@ -75,6 +75,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="SessionScans">
+      <property name="text">
+       <string>Session Scans: xxx</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="Deaths">
       <property name="text">
        <string>CMDR Deaths: -</string>
@@ -175,6 +182,13 @@
      <widget class="QPushButton" name="pushButton">
       <property name="text">
        <string>System to clipboard</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_UTCArrivedAtSystem">
+      <property name="text">
+       <string>UTC arrived at SYSTEM to clipboard</string>
       </property>
      </widget>
     </item>

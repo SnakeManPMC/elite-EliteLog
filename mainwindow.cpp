@@ -34,12 +34,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-    eliteLogVersion = "v1.1.8";
+    eliteLogVersion = "v1.1.9";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
 	filePos = 0;
 	numSessionSystems = 0;
+    numSessionScans = 0;
 	numAllSystems = 0;
 	cmdrLogFileName = "EliteLog.log";
 
@@ -662,7 +663,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	// Scan (exploration object)
 	if (!value.toString().compare("Scan", Qt::CaseInsensitive))
 	{
-		ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
+        // how many times we have scanned in this session
+        numSessionScans++;
+
+        ui->textEdit->append("*** DEBUG 'SCAN' DETECTED! ***");
 		// if its a STAR it includes StarType value
 		if (sett2.contains("StarType"))
 		{
@@ -775,7 +779,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		// if its a PLANET it includes PlanetClass
 		if (sett2.contains("PlanetClass"))
-		{
+        {
 			ttime = sett2.value(QString("timestamp")).toString();
 
 			// for tableview
@@ -1938,4 +1942,11 @@ void MainWindow::updateSystemsVisited()
 	ui->LandableRadiusRecords->setText("Landable Planet radius smallest: " + QString::number(landableRadiusSmallest / 1000) + ", largest: " + QString::number(landableRadiusLargest / 1000));
 	ui->LandableGravityRecords->setText("Landable Planet gravity lowest: " + QString::number(landableGravityLowest / 100) + ", highest: " + QString::number(landableGravityHighest / 100));
 	ui->Age_MYRecords->setText("Star youngest: " + QString::number(age_MYyoungest) + ", oldest: " + QString::number(age_MYoldest));
+    ui->SessionScans->setText("Session Scans: " + QString::number(numSessionScans));
+}
+
+void MainWindow::on_pushButton_UTCArrivedAtSystem_clicked()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(timeUTCtoString() + " arrived at " + MySystem + " system");
 }
