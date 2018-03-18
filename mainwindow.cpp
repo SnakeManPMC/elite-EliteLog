@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.1.7";
+    eliteLogVersion = "v1.1.8";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	savedHammers = 0;
@@ -830,7 +830,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 			// radius in JSON is in METERS, so divide by 1000 to get kilometers
 			value = sett2.value(QString("Radius"));
-			// planet radius smallest highscore
+            // radius added to tableview details
+            tdetails.append(", Radius: " + QString::number(value.toVariant().toFloat() / 1000) + " meters");
+
+            // planet radius smallest highscore
 			if (planetRadiusSmallest > value.toVariant().toFloat())
 			{
 				planetRadiusSmallest = value.toVariant().toFloat();
@@ -849,12 +852,6 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("Radius: " + QString::number(value.toVariant().toFloat()));
 
 			value = sett2.value(QString("SurfaceGravity"));
-
-			// gravity added to tableview details
-			tdetails.append(", " + QString::number(value.toVariant().toFloat() / 100) + "G");
-
-			// we have all the data we need, lets update
-			updateTableView(ttime, tevent, tdetails);
 
 			// planet gravity lowest highscore
 			if (surfaceGravityLowest > value.toVariant().toFloat())
@@ -925,7 +922,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 					saveEliteCFG();
 				}
 				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toFloat() / 100));
-			}
+
+                // gravity added to tableview details
+                tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 100, 'f', 2) + " G");
+            }
 
 			// SemiMajorAxis
 			value = sett2.value(QString("SemiMajorAxis"));
@@ -969,7 +969,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				matValue = iter.value().toVariant().toFloat();
 				ui->textEdit->append(matName + ", " + QString::number(matValue));
 			}
-		}
+
+            // we have all the data we need, lets update
+            updateTableView(ttime, tevent, tdetails);
+        }
 	}
 /*
 	// SellExplorationData
