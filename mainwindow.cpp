@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.2";
+	eliteLogVersion = "v1.2.3";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -93,9 +93,9 @@ void MainWindow::setupTableWidget()
 
 	QHeaderView* trueheader = ui->tableWidget->horizontalHeader();
 	trueheader->setSectionResizeMode(QHeaderView::Fixed);
-	trueheader->resizeSection(0, 200);
-	trueheader->resizeSection(1, 150);
-	trueheader->resizeSection(2, 800);
+	trueheader->resizeSection(0, 170);
+	trueheader->resizeSection(1, 130);
+	trueheader->resizeSection(2, 900);
 }
 
 
@@ -793,7 +793,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			// for tableview
 			tevent = "Scan: Planet";
 			tdetails = pmcBodyName;
-			tdetails.append(", Class: " + pmcPlanetClass);
+			tdetails.append(", " + pmcPlanetClass);
 
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> PlanetClass DETECTED! ***");
 			value = sett2.value(QString("BodyName"));
@@ -839,10 +839,18 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("Atmosphere"));
 			//qDebug() << "Atmosphere: " << value;
 			ui->textEdit->append("Atmosphere: " + value.toString());
+			if (value.toString().size() > 0)
+			{
+				tdetails.append(", " + value.toString());
+			}
 
 			value = sett2.value(QString("Volcanism"));
 			//qDebug() << "Volcanism: " << value;
 			ui->textEdit->append("Volcanism: " + value.toString());
+			if (value.toString().size() > 0)
+			{
+				tdetails.append(", " + value.toString());
+			}
 
 			value = sett2.value(QString("MassEM"));
 			ui->textEdit->append("MassEM: " + QString::number(value.toVariant().toFloat()));
@@ -851,7 +859,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("Radius"));
 			float pmcRadius = value.toVariant().toFloat();
 			// radius added to tableview details
-			tdetails.append(", Radius: " + QString::number(pmcRadius / 1000) + " meters");
+			tdetails.append(", Radius: " + QString::number(pmcRadius / 1000) + " km");
 			
 			// planet radius smallest highscore
 			if (planetRadiusSmallest > pmcRadius)
