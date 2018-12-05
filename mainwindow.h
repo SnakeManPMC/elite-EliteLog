@@ -13,7 +13,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit MainWindow(QWidget *parent = 0);
+	explicit MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
 private:
@@ -36,7 +36,7 @@ private:
 	int timerId;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater,credits;
 	float scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
@@ -57,6 +57,7 @@ private slots:
 	void on_pushButton_2_clicked();
 	void on_pushButton_3_clicked();
 	void on_pushButton_UTCArrivedAtSystem_clicked();
+	void on_pushButton_CreditsToClipboard_clicked();
 };
 
 #endif // MAINWINDOW_H

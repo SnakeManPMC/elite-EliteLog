@@ -206,6 +206,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_CreditsToClipboard">
+      <property name="text">
+       <string>Credits to clipboard</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">

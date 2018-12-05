@@ -1,21 +1,3 @@
-/*
-directory:
-C:\Users\<username>\AppData\Local\Frontier_Developments\Products\FORC-FDEV-D-1001\Logs
-
-file name:
-netLog.1412190357.01.log
-netLog.<YEAR><MONTH><DAY><HOUR><MINUTE>.<?>.log
-
-Log output line for Star System:
-{03:58:10} System:21(Aulin) Body:13 Pos:(-1857.98,2264.45,648.209)
-{02:19:51} System:4(Pipe (stem) Sector FM-U b3-4) Body:0 Pos:(9.16107e+009,-8.00884e+009,9.83126e+009) cruising
-
-QFile oldFile(outFileName);
-QFileInfo fileInfo;
-fileInfo.setFile(oldFile);
-QDateTime created = fileInfo.lastModified();
-*/
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "fileops.h"
@@ -34,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.3";
+	eliteLogVersion = "v1.2.4";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -52,10 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	readEliteCFG();
 
-	// AppConfig.xml reading and adding VerboseLogging if its missing.
-	// Elite v2.2 introduces Journal JSON files in stupid
-	// C:\Users\USERNAME\Saved Games\Frontier Developments\Elite Dangerous\ directory
-	// so we disable out appconfig.xml edits as they are obsolete
+	// disabled, use journals
 	//FileOps fo(logDirectory);
 
 	// kind of debug thing, but still
@@ -422,6 +401,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("-> GameMode: " + value.toString());
 		value = sett2.value(QString("Credits"));
 		ui->textEdit->append("-> Credits: " + QString::number(value.toInt()));
+
+		// current credits
+		credits = value.toVariant().toInt();
+
 		value = sett2.value(QString("Loan"));
 		ui->textEdit->append("-> Loan: " + QString::number(value.toVariant().toFloat()));
 	}
@@ -1083,6 +1066,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		// commodity total cost
 		value = sett2.value(QString("TotalCost"));
 		ui->textEdit->append("-> TotalCost: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits - value.toVariant().toInt());
 	}
 
 	// MarketSell
@@ -1100,6 +1086,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		// commodity total sale
 		value = sett2.value(QString("TotalSale"));
 		ui->textEdit->append("-> TotalSale: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits + value.toVariant().toInt());
+
 		// commodity AvgPricePaid
 		value = sett2.value(QString("AvgPricePaid"));
 		ui->textEdit->append("-> AvgPricePaid: " + QString::number(value.toVariant().toFloat()));
@@ -1909,6 +1899,14 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 
+// current credits to clipboard
+void MainWindow::on_pushButton_CreditsToClipboard_clicked()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(timeUTCtoString() + " current credits " + QString::number(credits));
+}
+
+
 bool MainWindow::fileChangedOrNot(QString elite_file)
 {
 	QFile elite_log(elite_file);
@@ -1962,8 +1960,7 @@ void MainWindow::updateSystemsVisited()
 {
 	// update label which shows number of unique systems
 	ui->SystemsVisited->setText("Unique Systems: " + QString::number(uniqueSystems.count()));
-	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord)
-					 + " at " + numSessionSystemsRecordDate);
+	ui->SessionSystemVisits->setText("Session Systems: " + QString::number(numSessionSystems) + ", Record: " + QString::number(numSessionSystemsRecord) + " at " + numSessionSystemsRecordDate);
 	ui->totalSystemsVisited->setText("Total Systems: " + QString::number(numAllSystems));
 
 	// this doesnt need to be here, but I dont know where else
