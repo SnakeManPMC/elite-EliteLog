@@ -33,7 +33,7 @@ private:
 	QString MySystem,MyStation,CurrentLogName;
 	QString JumpDist,FuelUsed,FuelLevel;
 	QStringList uniqueSystems;
-	int timerId;
+	int timerId,cargoValue,lastTrade,sessionTrades;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater,credits;

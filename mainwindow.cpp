@@ -880,7 +880,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityLowest > value.toVariant().toFloat())
 			{
 				surfaceGravityLowest = value.toVariant().toFloat();
-				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 100));
+				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 9.80665));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -888,11 +888,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityHighest < value.toVariant().toFloat())
 			{
 				surfaceGravityHighest = value.toVariant().toFloat();
-				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 100));
+				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 9.80665));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toVariant().toFloat() / 100));
+			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toVariant().toFloat() / 9.80665));
 
 			value = sett2.value(QString("SurfaceTemperature"));
 			ui->textEdit->append("SurfaceTemperature: " + QString::number(value.toVariant().toFloat()));
@@ -932,7 +932,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				if (landableGravityLowest > value.toVariant().toFloat())
 				{
 					landableGravityLowest = value.toVariant().toFloat();
-					ui->textEdit->append("New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 100));
+					ui->textEdit->append("New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 9.80665));
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
@@ -940,14 +940,14 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				if (landableGravityHighest < value.toVariant().toFloat())
 				{
 					landableGravityHighest = value.toVariant().toFloat();
-					ui->textEdit->append("New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 100));
+					ui->textEdit->append("New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 9.80665));
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
-				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toFloat() / 100));
+				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toFloat() / 9.80665));
 
 				// gravity added to tableview details
-				tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 100, 'f', 2) + " G");
+				tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 9.80665, 'f', 2) + " G");
 			}
 
 			// SemiMajorAxis
@@ -1000,6 +1000,27 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			updateTableView(ttime, tevent, tdetails);
 		}
 	}
+
+	// FSSAllBodiesFound, FSS zoomed all bodies in the whole system
+	if (!value.toString().compare("FSSAllBodiesFound", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("Count"));
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "All bodies detail scanned";
+		tdetails = "Total found: " + value.toString();
+		updateTableView(ttime, tevent, tdetails);
+	}
+
+	// SAAScanComplete, shot probes to planet
+	if (!value.toString().compare("SAAScanComplete", Qt::CaseInsensitive))
+	{
+		value = sett2.value(QString("BodyName"));
+		ttime = sett2.value(QString("timestamp")).toString();
+		tevent = "Surface Probe";
+		tdetails = "Body: " + value.toString() + ", Probes used: " + sett2.value(QString("ProbesUsed")).toString();
+		updateTableView(ttime, tevent, tdetails);
+	}
+
 /*
 	// SellExplorationData
 { "timestamp":"2016-06-10T14:32:03Z", "event":"SellExplorationData", "Systems":[ "HIP 78085", "Praea Euq NW-W b1-3" ], "Discovered":[ "HIP 78085 A", "Praea Euq NW-W b1-3", "Praea Euq NW-W b1-3 3 a", "Praea Euq NW-W b1-3 3" ], "BaseValue":10822, "Bonus":3959 }
@@ -1067,8 +1088,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("TotalCost"));
 		ui->textEdit->append("-> TotalCost: " + QString::number(value.toVariant().toFloat()));
 
+		cargoValue = value.toVariant().toInt();
 		// current credits
-		credits = (credits - value.toVariant().toInt());
+		credits = (credits - cargoValue);
 	}
 
 	// MarketSell
@@ -1087,8 +1109,12 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("TotalSale"));
 		ui->textEdit->append("-> TotalSale: " + QString::number(value.toVariant().toFloat()));
 
+		lastTrade = (value.toInt() - cargoValue);
+
 		// current credits
-		credits = (credits + value.toVariant().toInt());
+		credits = (credits + value.toInt());
+		sessionTrades = (sessionTrades + lastTrade);
+		ui->TradingStats->setText("Session Trade Profits: last " + QString::number(lastTrade) + "cr, total " + QString::number(sessionTrades) + "cr");
 
 		// commodity AvgPricePaid
 		value = sett2.value(QString("AvgPricePaid"));
@@ -1130,6 +1156,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("RefuelAll, Cost: " + QString::number(value.toVariant().toFloat()));
 		value = sett2.value(QString("Amount"));
 		ui->textEdit->append("-> Amount: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits - value.toVariant().toInt());
 	}
 
 	// CommitCrime
@@ -1189,6 +1218,9 @@ this is old code, please fix with new journal:
 	{
 		value = sett2.value(QString("Amount"));
 		ui->textEdit->append("PayFines, Amount: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits - value.toVariant().toInt());
 	}
 
 	// ModuleStore
@@ -1460,6 +1492,9 @@ this is old code, please fix with new journal:
 	{
 		value = sett2.value(QString("Cost"));
 		ui->textEdit->append("RepairAll, Cost: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits - value.toVariant().toInt());
 	}
 
 	// Repair
@@ -1471,6 +1506,9 @@ this is old code, please fix with new journal:
 		ui->textEdit->append("-> Item_Localised: " + value.toString());
 		value = sett2.value(QString("Cost"));
 		ui->textEdit->append("-> Cost: " + QString::number(value.toVariant().toFloat()));
+
+		// current credits
+		credits = (credits - value.toVariant().toInt());
 	}
 
 	// RebootRepair even just has Modules which is an array
@@ -1974,7 +2012,7 @@ void MainWindow::updateSystemsVisited()
 	ui->StarRadiusRecords->setText("Star radius smallest: " + QString::number(stellarRadiusSmallest) + ", largest: " + QString::number(stellarRadiusLargest));
 	ui->DistanceLSRecords->setText("Planet Light Seconds from star closest: " + QString::number(DistanceFromArrivalLSMin) + ", furthest: " + QString::number(DistanceFromArrivalLSMax));
 	ui->PlanetRadiusRecords->setText("Planet radius smallest: " + QString::number(planetRadiusSmallest / 1000) + ", largest: " + QString::number(planetRadiusLargest / 1000));
-	ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest / 100) + ", highest: " + QString::number(surfaceGravityHighest / 100));
+	ui->PlanetGravityRecords->setText("Planet gravity lowest: " + QString::number(surfaceGravityLowest / 9.80665) + ", highest: " + QString::number(surfaceGravityHighest / 9.80665));
 	ui->LandableRadiusRecords->setText("Landable Planet radius smallest: " + QString::number(landableRadiusSmallest / 1000) + ", largest: " + QString::number(landableRadiusLargest / 1000));
 	ui->LandableGravityRecords->setText("Landable Planet gravity lowest: " + QString::number(landableGravityLowest / 100) + ", highest: " + QString::number(landableGravityHighest / 100));
 	ui->Age_MYRecords->setText("Star youngest: " + QString::number(age_MYyoungest) + ", oldest: " + QString::number(age_MYoldest));

@@ -159,6 +159,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="TradingStats">
+      <property name="text">
+       <string>Session: last trade -Cr, total trades -Cr</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QCheckBox" name="SysNamAutoClipboard">
       <property name="text">
        <string>System name auto clipboard</string>
