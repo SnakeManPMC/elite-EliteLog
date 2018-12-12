@@ -451,6 +451,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		// no station in immediate FSD jump range :)
 		ui->StationName->setText("Station: -");
 
+		// empty previous systems scanned bodies qstringlist
+		sessionScanBodies.clear();
+
 		// StarPos is array
 		// "StarPos":[195.406,281.469,5.500]
 		value = sett2.value(QString("StarPos"));
@@ -993,11 +996,21 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				ui->textEdit->append(matName + ", " + QString::number(matValue));
 			}
 
-			// if we have special planet we write it to specific txt file
-			if (pmcPlanetClass.contains("Ammonia world") || pmcPlanetClass.contains("Earthlike body") || pmcPlanetClass.contains("Water world")) addSpecialPlanets(pmcPlanetClass, pmcBodyName, pmcDistanceLS, pmcRadius);
+			// if we have already scanned this system we do nothing
+			if (sessionScanBodies.contains(pmcBodyName))
+			{
+				ui->textEdit->append("Duplicate scan BodyName found in sessionScanBodies.");
+			}
+			else
+			{
+				sessionScanBodies.push_back(pmcBodyName);
 
-			// we have all the data we need, lets update
-			updateTableView(ttime, tevent, tdetails);
+				// if we have special planet we write it to specific txt file
+				if (pmcPlanetClass.contains("Ammonia world") || pmcPlanetClass.contains("Earthlike body") || pmcPlanetClass.contains("Water world")) addSpecialPlanets(pmcPlanetClass, pmcBodyName, pmcDistanceLS, pmcRadius);
+
+				// we have all the data we need, lets update
+				updateTableView(ttime, tevent, tdetails);
+			}
 		}
 	}
 

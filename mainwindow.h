@@ -32,7 +32,7 @@ private:
 	QString extractStationName(QString line);
 	QString MySystem,MyStation,CurrentLogName;
 	QString JumpDist,FuelUsed,FuelLevel;
-	QStringList uniqueSystems;
+	QStringList uniqueSystems,sessionScanBodies;
 	int timerId,cargoValue,lastTrade,sessionTrades;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
