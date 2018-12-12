@@ -514,7 +514,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		}
 
 		JumpDist = value.toVariant().toFloat();
-		ui->JumpDistanceLast->setText("Last jump distance: " + QString::number(value.toVariant().toFloat()));
+		sessionJumpDist = sessionJumpDist + value.toVariant().toFloat();
+		ui->JumpDistanceLast->setText("Last jump distance: " + QString::number(value.toVariant().toFloat()) + ", Session Distance: " + QString::number(sessionJumpDist));
 
 		value = sett2.value(QString("FuelUsed"));
 		//qDebug() << value;

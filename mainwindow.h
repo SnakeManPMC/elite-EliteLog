@@ -41,7 +41,7 @@ private:
 	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
 	float stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
-	float age_MYyoungest,age_MYoldest,fuelLevelLowest,sessionPlanetSmallest,sessionPlanetLargest;
+	float age_MYyoungest,age_MYoldest,fuelLevelLowest,sessionPlanetSmallest,sessionPlanetLargest,sessionJumpDist;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
