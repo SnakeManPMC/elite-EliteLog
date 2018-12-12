@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.4";
+	eliteLogVersion = "v1.2.5";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -1007,7 +1007,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("Count"));
 		ttime = sett2.value(QString("timestamp")).toString();
 		tevent = "All bodies detail scanned";
-		tdetails = "Total found: " + value.toString();
+		tdetails = "Total found: " + QString::number(value.toVariant().toDouble());
 		updateTableView(ttime, tevent, tdetails);
 	}
 
@@ -1017,7 +1017,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("BodyName"));
 		ttime = sett2.value(QString("timestamp")).toString();
 		tevent = "Surface Probe";
-		tdetails = "Body: " + value.toString() + ", Probes used: " + sett2.value(QString("ProbesUsed")).toString();
+		// also EfficiencyTarget
+		tdetails = "Body: " + value.toString();
+		value = sett2.value(QString("ProbesUsed"));
+		tdetails.append(", Probes used: " + QString::number(value.toVariant().toInt()));
 		updateTableView(ttime, tevent, tdetails);
 	}
 
