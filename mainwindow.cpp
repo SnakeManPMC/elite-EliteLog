@@ -2092,7 +2092,7 @@ void MainWindow::on_actionDiscord_Paste_triggered()
 	QClipboard *clipboard = QApplication::clipboard();
 	QString myPaste = timeUTCtoString() + " Elite Log session systems visited (FSD jumps): " + QString::number(numSessionSystems) + " traveled distance: " + QString::number(sessionJumpDist) + "Ly";
 	myPaste.append(", special planets ammonia: " + QString::number(numSessionAmmonia) + ", earthlike: " + QString::number(numSessionEarth) + ", water: " + QString::number(numSessionWater));
-	myPaste.append(", planets smallest: " + QString::number(sessionPlanetSmallest) + "km, largest: " + QString::number(sessionPlanetLargest) + "km");
+	myPaste.append(", planets smallest: " + QString::number(sessionPlanetSmallest / 1000) + "km, largest: " + QString::number(sessionPlanetLargest / 1000) + "km");
 	myPaste.append(", detail surface scans: " + QString::number(numSessionScans));
 	clipboard->setText(myPaste);
 }
