@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.5";
+	eliteLogVersion = "v1.2.6";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -123,83 +123,83 @@ void MainWindow::readEliteCFG()
 
 	// Fuel scooped total
 	tmp = in.readLine();
-	scoopedTotal = tmp.toFloat(&ok);
+	scoopedTotal = tmp.toDouble(&ok);
 
 	// jump distance shortest
 	tmp = in.readLine();
-	JumpDistShortest = tmp.toFloat(&ok);
+	JumpDistShortest = tmp.toDouble(&ok);
 
 	// jump distance longest
 	tmp = in.readLine();
-	JumpDistLongest = tmp.toFloat(&ok);
+	JumpDistLongest = tmp.toDouble(&ok);
 
 	// LS distance shortest
 	tmp = in.readLine();
-	DistanceFromArrivalLSMin = tmp.toFloat(&ok);
+	DistanceFromArrivalLSMin = tmp.toDouble(&ok);
 
 	// LS distance longest
 	tmp = in.readLine();
-	DistanceFromArrivalLSMax = tmp.toFloat(&ok);
+	DistanceFromArrivalLSMax = tmp.toDouble(&ok);
 
 	// planet radius smallest
 	tmp = in.readLine();
-	planetRadiusSmallest = tmp.toFloat(&ok);
+	planetRadiusSmallest = tmp.toDouble(&ok);
 
 	// planet radius largest
 	tmp = in.readLine();
-	planetRadiusLargest = tmp.toFloat(&ok);
+	planetRadiusLargest = tmp.toDouble(&ok);
 
 	// planet surface gravity lowest
 	tmp = in.readLine();
-	surfaceGravityLowest = tmp.toFloat(&ok);
+	surfaceGravityLowest = tmp.toDouble(&ok);
 
 	// planet surface gravity highest
 	tmp = in.readLine();
-	surfaceGravityHighest = tmp.toFloat(&ok);
+	surfaceGravityHighest = tmp.toDouble(&ok);
 
 	// stellar mass lowest
 	tmp = in.readLine();
-	stellarMassLowest = tmp.toFloat(&ok);
+	stellarMassLowest = tmp.toDouble(&ok);
 
 	// stellar mass highest
 	tmp = in.readLine();
-	stellarMassHighest = tmp.toFloat(&ok);
+	stellarMassHighest = tmp.toDouble(&ok);
 
 	// stellar radius smallest
 	tmp = in.readLine();
-	stellarRadiusSmallest = tmp.toFloat(&ok);
+	stellarRadiusSmallest = tmp.toDouble(&ok);
 
 	// stellar radius largest
 	tmp = in.readLine();
-	stellarRadiusLargest = tmp.toFloat(&ok);
+	stellarRadiusLargest = tmp.toDouble(&ok);
 
 	// landable planet smallest
 	tmp = in.readLine();
-	landableRadiusSmallest = tmp.toFloat(&ok);
+	landableRadiusSmallest = tmp.toDouble(&ok);
 
 	// landable planet largest
 	tmp = in.readLine();
-	landableRadiusLargest = tmp.toFloat(&ok);
+	landableRadiusLargest = tmp.toDouble(&ok);
 
 	// landable gravity lowest
 	tmp = in.readLine();
-	landableGravityLowest = tmp.toFloat(&ok);
+	landableGravityLowest = tmp.toDouble(&ok);
 
 	// landable gravity highest
 	tmp = in.readLine();
-	landableGravityHighest = tmp.toFloat(&ok);
+	landableGravityHighest = tmp.toDouble(&ok);
 
 	// fuel level lowest
 	tmp = in.readLine();
-	fuelLevelLowest = tmp.toFloat(&ok);
+	fuelLevelLowest = tmp.toDouble(&ok);
 
 	// star age youngest
 	tmp = in.readLine();
-	age_MYyoungest = tmp.toFloat(&ok);
+	age_MYyoungest = tmp.toDouble(&ok);
 
 	// star age oldest
 	tmp = in.readLine();
-	age_MYoldest = tmp.toFloat(&ok);
+	age_MYoldest = tmp.toDouble(&ok);
 
 	ui->textEdit->append("EliteLog.cfg says the Journal dir is: " + logDirectory);
 	file.close();
@@ -396,7 +396,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("GameMode"));
 		ui->textEdit->append("-> GameMode: " + value.toString());
 		value = sett2.value(QString("Credits"));
@@ -406,7 +406,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		credits = value.toVariant().toInt();
 
 		value = sett2.value(QString("Loan"));
-		ui->textEdit->append("-> Loan: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Loan: " + value.toVariant().toString());
 	}
 
 	// progress and rank are both numeric value from 0 to 100
@@ -414,30 +414,30 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	if (!value.toString().compare("Progress", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Combat"));
-		ui->textEdit->append("Progress, Combat: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("Progress, Combat: " + value.toVariant().toString());
 		value = sett2.value(QString("Trade"));
-		ui->textEdit->append("-> Trade: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Trade: " + value.toVariant().toString());
 		value = sett2.value(QString("Explore"));
-		ui->textEdit->append("-> Explore: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Explore: " + value.toVariant().toString());
 		value = sett2.value(QString("Empire"));
-		ui->textEdit->append("-> Empire: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Empire: " + value.toVariant().toString());
 		value = sett2.value(QString("Federation"));
-		ui->textEdit->append("-> Federation: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Federation: " + value.toVariant().toString());
 	}
 
 	// Rank
 	if (!value.toString().compare("Rank", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Combat"));
-		ui->textEdit->append("Rank, Combat: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("Rank, Combat: " + value.toVariant().toString());
 		value = sett2.value(QString("Trade"));
-		ui->textEdit->append("-> Trade: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Trade: " + value.toVariant().toString());
 		value = sett2.value(QString("Explore"));
-		ui->textEdit->append("-> Explore: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Explore: " + value.toVariant().toString());
 		value = sett2.value(QString("Empire"));
-		ui->textEdit->append("-> Empire: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Empire: " + value.toVariant().toString());
 		value = sett2.value(QString("Federation"));
-		ui->textEdit->append("-> Federation: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Federation: " + value.toVariant().toString());
 	}
 
 	// FSDJump
@@ -461,7 +461,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		/*
 		qDebug() << "value.toArray(): " << value.toArray();
 		qDebug() << "value.toArray().at(0): " << value.toArray().at(0);
-		qDebug() << "value.toArray().at(0).toFloat(): " << value.toArray().at(0).toDouble();
+		qDebug() << "value.toArray().at(0).toDouble(): " << value.toArray().at(0).toDouble();
 		*/
 		ui->textEdit->append("StarPos:[" + QString::number(value.toArray().at(0).toDouble()) + "," + QString::number(value.toArray().at(1).toDouble()) + "," + QString::number(value.toArray().at(2).toDouble()) + "]");
 
@@ -497,48 +497,48 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		//qDebug() << value;
 
 		// new shortest jump record
-		if (JumpDistShortest > value.toVariant().toFloat())
+		if (JumpDistShortest > value.toVariant().toDouble())
 		{
-			JumpDistShortest = value.toVariant().toFloat();
+			JumpDistShortest = value.toVariant().toDouble();
 			ui->textEdit->append("New shortest jump distance record!");
 			updateSystemsVisited();
 			saveEliteCFG();
 		}
 		// new longest jump record
-		if (JumpDistLongest < value.toVariant().toFloat())
+		if (JumpDistLongest < value.toVariant().toDouble())
 		{
-			JumpDistLongest = value.toVariant().toFloat();
+			JumpDistLongest = value.toVariant().toDouble();
 			ui->textEdit->append("New longest jump distance record!");
 			updateSystemsVisited();
 			saveEliteCFG();
 		}
 
-		JumpDist = value.toVariant().toFloat();
-		sessionJumpDist = sessionJumpDist + value.toVariant().toFloat();
-		ui->JumpDistanceLast->setText("Last jump distance: " + QString::number(value.toVariant().toFloat()) + ", Session Distance: " + QString::number(sessionJumpDist));
+		JumpDist = value.toVariant().toString();
+		sessionJumpDist = sessionJumpDist + value.toVariant().toDouble();
+		ui->JumpDistanceLast->setText("Last jump distance: " + JumpDist + ", Session Distance: " + QString::number(sessionJumpDist));
 
 		value = sett2.value(QString("FuelUsed"));
 		//qDebug() << value;
-		FuelUsed = value.toVariant().toFloat();
+		FuelUsed = value.toVariant().toString();
 
 		// tableview jump to system
 		ttime = sett2.value(QString("timestamp")).toString();
 		tevent = "Jump to System";
-		tdetails = (MySystem + ", Jump distance: " + QString::number(sett2.value(QString("JumpDist")).toVariant().toFloat()) + "Ly, Fuel used: " + QString::number(sett2.value(QString("FuelUsed")).toVariant().toFloat()));
+		tdetails = (MySystem + ", Jump distance: " + QString::number(sett2.value(QString("JumpDist")).toVariant().toDouble()) + "Ly, Fuel used: " + QString::number(sett2.value(QString("FuelUsed")).toVariant().toDouble()));
 		updateTableView(ttime, tevent, tdetails);
 
 		value = sett2.value(QString("FuelLevel"));
 		//qDebug() << value;
-		FuelLevel = value.toVariant().toFloat();
+		FuelLevel = value.toVariant().toString();
 		// we have reached lowest fuel level ever!
-		if (fuelLevelLowest > value.toVariant().toFloat())
+		if (fuelLevelLowest > value.toVariant().toDouble())
 		{
-			fuelLevelLowest = value.toVariant().toFloat();
+			fuelLevelLowest = value.toVariant().toDouble();
 			ui->textEdit->append("Come on Maverick we're running on fumes! Lets land this sucker! Lowest fuel level record!");
 			updateSystemsVisited();
 			saveEliteCFG();
 		}
-		ui->textEdit->append("FuelUsed: " + QString::number(sett2.value(QString("FuelUsed")).toVariant().toFloat()) + ", FuelLevel: " + QString::number(sett2.value(QString("FuelLevel")).toVariant().toFloat()));
+		ui->textEdit->append("FuelUsed: " + QString::number(sett2.value(QString("FuelUsed")).toVariant().toDouble()) + ", FuelLevel: " + QString::number(sett2.value(QString("FuelLevel")).toVariant().toDouble()));
 	}
 
 	// Location
@@ -598,7 +598,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	if (!value.toString().compare("DockingGranted", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("LandingPad"));
-		ui->textEdit->append("DockingGranted, LandingPad: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("DockingGranted, LandingPad: " + value.toVariant().toString());
 		value = sett2.value(QString("StationName"));
 		ui->textEdit->append("DockingGranted, StationName: " + value.toString());
 	}
@@ -665,7 +665,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ttime = sett2.value(QString("timestamp")).toString();
 			tevent = "Scan: Star";
 			tdetails = (sett2.value(QString("BodyName")).toString() + ", Type: " + sett2.value(QString("StarType")).toString() +
-				    ", Age: " + QString::number(sett2.value(QString("Age_MY")).toVariant().toFloat()));
+				    ", Age: " + QString::number(sett2.value(QString("Age_MY")).toVariant().toDouble()));
 			updateTableView(ttime, tevent, tdetails);
 
 			ui->textEdit->append("*** DEBUG 'SCAN' IF-> StarType DETECTED! ***");
@@ -673,100 +673,100 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("BodyName: " + value.toString());
 
 			value = sett2.value(QString("DistanceFromArrivalLS"));
-			ui->textEdit->append("DistanceFromArrivalLS: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("DistanceFromArrivalLS: " + value.toVariant().toString());
 
 			value = sett2.value(QString("StarType"));
 			ui->textEdit->append("StarType: " + value.toString());
 
 			value = sett2.value(QString("StellarMass"));
 			// stellarMass lowest highscore
-			if (stellarMassLowest > value.toVariant().toFloat())
+			if (stellarMassLowest > value.toVariant().toDouble())
 			{
-				stellarMassLowest = value.toVariant().toFloat();
+				stellarMassLowest = value.toVariant().toDouble();
 				ui->textEdit->append("New stellarMass highscore LOWEST!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// stellarMass highest highscore
-			if (stellarMassHighest < value.toVariant().toFloat())
+			if (stellarMassHighest < value.toVariant().toDouble())
 			{
-				stellarMassHighest = value.toVariant().toFloat();
+				stellarMassHighest = value.toVariant().toDouble();
 				ui->textEdit->append("New stellarMass highscore HIGHEST!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("StellarMass: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("StellarMass: " + value.toVariant().toString());
 
 			value = sett2.value(QString("Radius"));
 			// stellar radius smallest highscore
-			if (stellarRadiusSmallest > value.toVariant().toFloat())
+			if (stellarRadiusSmallest > value.toVariant().toDouble())
 			{
-				stellarRadiusSmallest = value.toVariant().toFloat();
+				stellarRadiusSmallest = value.toVariant().toDouble();
 				ui->textEdit->append("New stellar radius smallest highscore!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// stellar radius largest highscore
-			if (stellarRadiusLargest < value.toVariant().toFloat())
+			if (stellarRadiusLargest < value.toVariant().toDouble())
 			{
-				stellarRadiusLargest = value.toVariant().toFloat();
+				stellarRadiusLargest = value.toVariant().toDouble();
 				ui->textEdit->append("New stellar radius largest highscore!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("Radius: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Radius: " + value.toVariant().toString());
 
 			// AbsoluteMagnitude
 			value = sett2.value(QString("AbsoluteMagnitude"));
-			ui->textEdit->append("AbsoluteMagnitude: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("AbsoluteMagnitude: " + value.toVariant().toString());
 
 			// Age_MY
 			value = sett2.value(QString("Age_MY"));
 			// star age youngest highscore
-			if (age_MYyoungest > value.toVariant().toFloat())
+			if (age_MYyoungest > value.toVariant().toDouble())
 			{
-				age_MYyoungest = value.toVariant().toFloat();
+				age_MYyoungest = value.toVariant().toDouble();
 				ui->textEdit->append("New star youngest highscore!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// star age oldest highscore
-			if (age_MYoldest < value.toVariant().toFloat())
+			if (age_MYoldest < value.toVariant().toDouble())
 			{
-				age_MYoldest = value.toVariant().toFloat();
+				age_MYoldest = value.toVariant().toDouble();
 				ui->textEdit->append("New star oldest highscore!");
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("Age_MY: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Age_MY: " + value.toVariant().toString());
 
 			// SurfaceTemperature
 			value = sett2.value(QString("SurfaceTemperature"));
-			ui->textEdit->append("SurfaceTemperature: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("SurfaceTemperature: " + value.toVariant().toString());
 
 			// SemiMajorAxis
 			value = sett2.value(QString("SemiMajorAxis"));
-			ui->textEdit->append("SemiMajorAxis: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("SemiMajorAxis: " + value.toVariant().toString());
 
 			// Eccentricity
 			value = sett2.value(QString("Eccentricity"));
-			ui->textEdit->append("Eccentricity: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Eccentricity: " + value.toVariant().toString());
 
 			// OrbitalInclination
 			value = sett2.value(QString("OrbitalInclination"));
-			ui->textEdit->append("OrbitalInclination: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("OrbitalInclination: " + value.toVariant().toString());
 
 			// Periapsis
 			value = sett2.value(QString("Periapsis"));
-			ui->textEdit->append("Periapsis: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Periapsis: " + value.toVariant().toString());
 
 			// OrbitalPeriod
 			value = sett2.value(QString("OrbitalPeriod"));
-			ui->textEdit->append("OrbitalPeriod: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("OrbitalPeriod: " + value.toVariant().toString());
 
 			// RotationPeriod
 			value = sett2.value(QString("RotationPeriod"));
-			ui->textEdit->append("RotationPeriod: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("RotationPeriod: " + value.toVariant().toString());
 		}
 
 		// if its a PLANET it includes PlanetClass
@@ -787,7 +787,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			ui->textEdit->append("BodyName: " + value.toString());
 
 			value = sett2.value(QString("DistanceFromArrivalLS"));
-			float pmcDistanceLS = value.toVariant().toFloat();
+			double pmcDistanceLS = value.toVariant().toDouble();
 			// new minimum LS highscore
 			if (DistanceFromArrivalLSMin > pmcDistanceLS)
 			{
@@ -840,11 +840,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			}
 
 			value = sett2.value(QString("MassEM"));
-			ui->textEdit->append("MassEM: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("MassEM: " + value.toVariant().toString());
 
 			// radius in JSON is in METERS, so divide by 1000 to get kilometers
 			value = sett2.value(QString("Radius"));
-			float pmcRadius = value.toVariant().toFloat();
+			double pmcRadius = value.toVariant().toDouble();
 			// radius added to tableview details
 			tdetails.append(", Radius: " + QString::number(pmcRadius / 1000) + " km");
 			
@@ -881,28 +881,28 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("SurfaceGravity"));
 
 			// planet gravity lowest highscore
-			if (surfaceGravityLowest > value.toVariant().toFloat())
+			if (surfaceGravityLowest > value.toVariant().toDouble())
 			{
-				surfaceGravityLowest = value.toVariant().toFloat();
+				surfaceGravityLowest = value.toVariant().toDouble();
 				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 9.80665));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
 			// planet gravity highest highscore
-			if (surfaceGravityHighest < value.toVariant().toFloat())
+			if (surfaceGravityHighest < value.toVariant().toDouble())
 			{
-				surfaceGravityHighest = value.toVariant().toFloat();
+				surfaceGravityHighest = value.toVariant().toDouble();
 				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 9.80665));
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toVariant().toFloat() / 9.80665));
+			ui->textEdit->append("SurfaceGravity: " + QString::number(value.toVariant().toDouble() / 9.80665));
 
 			value = sett2.value(QString("SurfaceTemperature"));
-			ui->textEdit->append("SurfaceTemperature: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("SurfaceTemperature: " + value.toVariant().toString());
 
 			value = sett2.value(QString("SurfacePressure"));
-			ui->textEdit->append("SurfacePressure: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("SurfacePressure: " + value.toVariant().toString());
 
 			value = sett2.value(QString("Landable"));
 			//qDebug() << "Landable: " << value;
@@ -915,17 +915,17 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				// do some highscores specifically for landables, ie smallest, largest radius
 				value = sett2.value(QString("Radius"));
 				// planet radius smallest highscore
-				if (landableRadiusSmallest > value.toVariant().toFloat())
+				if (landableRadiusSmallest > value.toVariant().toDouble())
 				{
-					landableRadiusSmallest = value.toVariant().toFloat();
+					landableRadiusSmallest = value.toVariant().toDouble();
 					ui->textEdit->append("New highscore *landable* planet radius SMALLEST! " + QString::number(landableRadiusSmallest / 1000));
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
 				// planet radius largest highscore
-				if (landableRadiusLargest < value.toVariant().toFloat())
+				if (landableRadiusLargest < value.toVariant().toDouble())
 				{
-					landableRadiusLargest = value.toVariant().toFloat();
+					landableRadiusLargest = value.toVariant().toDouble();
 					ui->textEdit->append("New highscore *landable* planet radius LARGEST! " + QString::number(landableRadiusLargest / 1000));
 					updateSystemsVisited();
 					saveEliteCFG();
@@ -933,48 +933,48 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 				value = sett2.value(QString("SurfaceGravity"));
 				// planet gravity lowest highscore
-				if (landableGravityLowest > value.toVariant().toFloat())
+				if (landableGravityLowest > value.toVariant().toDouble())
 				{
-					landableGravityLowest = value.toVariant().toFloat();
+					landableGravityLowest = value.toVariant().toDouble();
 					ui->textEdit->append("New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 9.80665));
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
 				// planet gravity highest highscore
-				if (landableGravityHighest < value.toVariant().toFloat())
+				if (landableGravityHighest < value.toVariant().toDouble())
 				{
-					landableGravityHighest = value.toVariant().toFloat();
+					landableGravityHighest = value.toVariant().toDouble();
 					ui->textEdit->append("New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 9.80665));
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
-				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toFloat() / 9.80665));
+				ui->textEdit->append("landableGravity: " + QString::number(value.toVariant().toDouble() / 9.80665));
 
 				// gravity added to tableview details
-				tdetails.append(", Landable: " + QString::number(value.toVariant().toFloat() / 9.80665, 'f', 2) + " G");
+				tdetails.append(", Landable: " + QString::number(value.toVariant().toDouble() / 9.80665, 'f', 2) + " G");
 			}
 
 			// SemiMajorAxis
 			value = sett2.value(QString("SemiMajorAxis"));
-			ui->textEdit->append("SemiMajorAxis: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("SemiMajorAxis: " + value.toVariant().toString());
 
 			// Eccentricity
 			value = sett2.value(QString("Eccentricity"));
-			ui->textEdit->append("Eccentricity: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Eccentricity: " + value.toVariant().toString());
 
 			// OrbitalInclination
 			value = sett2.value(QString("OrbitalInclination"));
-			ui->textEdit->append("OrbitalInclination: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("OrbitalInclination: " + value.toVariant().toString());
 
 			// Periapsis
 			value = sett2.value(QString("Periapsis"));
-			ui->textEdit->append("Periapsis: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("Periapsis: " + value.toVariant().toString());
 
 			value = sett2.value(QString("OrbitalPeriod"));
-			ui->textEdit->append("OrbitalPeriod: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("OrbitalPeriod: " + value.toVariant().toString());
 
 			value = sett2.value(QString("RotationPeriod"));
-			ui->textEdit->append("RotationPeriod: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("RotationPeriod: " + value.toVariant().toString());
 
 			/*
 			 * rings is an array of sorts :)
@@ -989,11 +989,11 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			// Materials
 			QJsonObject jmats = sett2.value(QString("Materials")).toObject();
 			QString matName;
-			float matValue;
+			double matValue;
 			for(QJsonObject::const_iterator iter = jmats.begin(); iter != jmats.end(); ++iter)
 			{
 				matName = iter.key();
-				matValue = iter.value().toVariant().toFloat();
+				matValue = iter.value().toVariant().toDouble();
 				ui->textEdit->append(matName + ", " + QString::number(matValue));
 			}
 
@@ -1058,21 +1058,21 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			value = sett2.value(QString("Name"));
 			ui->textEdit->append("MaterialCollected, Encoded, Name: " + value.toString());
 			value = sett2.value(QString("DiscoveryNumber"));
-			ui->textEdit->append("DiscoveryNumber: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("DiscoveryNumber: " + value.toVariant().toString());
 		}
 		if (!tmp.compare("Manufactured"))
 		{
 			value = sett2.value(QString("Name"));
 			ui->textEdit->append("MaterialCollected, Manufactured, Name: " + value.toString());
 			value = sett2.value(QString("DiscoveryNumber"));
-			ui->textEdit->append("DiscoveryNumber: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("DiscoveryNumber: " + value.toVariant().toString());
 		}
 		if (!tmp.compare("Raw"))
 		{
 			value = sett2.value(QString("Name"));
 			ui->textEdit->append("MaterialCollected, Raw, Name: " + value.toString());
 			value = sett2.value(QString("DiscoveryNumber"));
-			ui->textEdit->append("DiscoveryNumber: " + QString::number(value.toVariant().toFloat()));
+			ui->textEdit->append("DiscoveryNumber: " + value.toVariant().toString());
 		}
 	}
 
@@ -1080,8 +1080,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	if (!value.toString().compare("FuelScoop", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Scooped"));
-		scoopedTotal += value.toVariant().toFloat();
-		ui->textEdit->append("Scooped: " + QString::number(value.toVariant().toFloat()) + ", total scooped: " + QString::number(scoopedTotal));
+		scoopedTotal += value.toVariant().toDouble();
+		ui->textEdit->append("Scooped: " + value.toVariant().toString() + ", total scooped: " + QString::number(scoopedTotal));
 		ui->FuelScoopedTotal->setText("Fuel scooped total: " + QString::number(scoopedTotal));
 
 		// EliteLog.CFG update, but damn you will hammer this saving a lot
@@ -1097,13 +1097,13 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("MarketBuy, Type: " + value.toString());
 		// commodity count
 		value = sett2.value(QString("Count"));
-		ui->textEdit->append("-> Count: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Count: " + value.toVariant().toString());
 		// commodity buy price
 		value = sett2.value(QString("BuyPrice"));
-		ui->textEdit->append("-> BuyPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> BuyPrice: " + value.toVariant().toString());
 		// commodity total cost
 		value = sett2.value(QString("TotalCost"));
-		ui->textEdit->append("-> TotalCost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> TotalCost: " + value.toVariant().toString());
 
 		cargoValue = value.toVariant().toInt();
 		// current credits
@@ -1118,13 +1118,13 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		ui->textEdit->append("MarketSell, Type: " + value.toString());
 		// commodity count
 		value = sett2.value(QString("Count"));
-		ui->textEdit->append("-> Count: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Count: " + value.toVariant().toString());
 		// commodity sell price
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 		// commodity total sale
 		value = sett2.value(QString("TotalSale"));
-		ui->textEdit->append("-> TotalSale: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> TotalSale: " + value.toVariant().toString());
 
 		lastTrade = (value.toInt() - cargoValue);
 
@@ -1135,7 +1135,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		// commodity AvgPricePaid
 		value = sett2.value(QString("AvgPricePaid"));
-		ui->textEdit->append("-> AvgPricePaid: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> AvgPricePaid: " + value.toVariant().toString());
 	}
 
 	// ReceiveText
@@ -1170,9 +1170,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	if (!value.toString().compare("RefuelAll", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("RefuelAll, Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("RefuelAll, Cost: " + value.toVariant().toString());
 		value = sett2.value(QString("Amount"));
-		ui->textEdit->append("-> Amount: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Amount: " + value.toVariant().toString());
 
 		// current credits
 		credits = (credits - value.toVariant().toInt());
@@ -1186,9 +1186,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		value = sett2.value(QString("Faction"));
 		ui->textEdit->append("-> Faction: " + value.toString());
 		value = sett2.value(QString("Fine"));
-		ui->textEdit->append("-> Fine: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Fine: " + value.toVariant().toString());
 		value = sett2.value(QString("Bounty"));
-		ui->textEdit->append("-> Bounty: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Bounty: " + value.toVariant().toString());
 		value = sett2.value(QString("Victim"));
 		ui->textEdit->append("-> Victim: " + value.toString());
 		value = sett2.value(QString("Victim_Localised"));
@@ -1216,7 +1216,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Target"));
 		ui->textEdit->append("-> Target: " + value.toString());
 		value = sett2.value(QString("Reward"));
-		ui->textEdit->append("-> Reward: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Reward: " + value.toVariant().toString());
 
 		// Rewards is an array, hmm?
 	}
@@ -1225,16 +1225,16 @@ this is old code, please fix with new journal:
 	if (!value.toString().compare("PayLegacyFines", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Amount"));
-		ui->textEdit->append("PayLegacyFines, Amount: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("PayLegacyFines, Amount: " + value.toVariant().toString());
 		value = sett2.value(QString("BrokerPercentage"));
-		ui->textEdit->append("-> BrokerPercentage: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> BrokerPercentage: " + value.toVariant().toString());
 	}
 
 	// PayFines
 	if (!value.toString().compare("PayFines", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Amount"));
-		ui->textEdit->append("PayFines, Amount: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("PayFines, Amount: " + value.toVariant().toString());
 
 		// current credits
 		credits = (credits - value.toVariant().toInt());
@@ -1252,7 +1252,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// MassModuleStore
@@ -1261,7 +1261,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("MassModuleStore, Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 		// Items is array of all the modules stored
 	}
 
@@ -1275,9 +1275,9 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("SellItem_Localised"));
 		ui->textEdit->append("-> SellItem_Localised: " + value.toString());
 		value = sett2.value(QString("ServerId"));
-		ui->textEdit->append("-> ServerId: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ServerId: " + value.toVariant().toString());
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 	}
@@ -1288,17 +1288,17 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("ShipType"));
 		ui->textEdit->append("ShipyardBuy, ShipType: " + value.toString());
 		value = sett2.value(QString("ShipPrice"));
-		ui->textEdit->append("-> ShipPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("StoreOldShip"));
 		ui->textEdit->append("-> StoreOldShip: " + value.toString());
 		value = sett2.value(QString("StoreShipID"));
-		ui->textEdit->append("-> StoreShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> StoreShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("SellOldShip"));
 		ui->textEdit->append("-> SellOldShip: " + value.toString());
 		value = sett2.value(QString("SellShipID"));
-		ui->textEdit->append("-> SellShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 	}
 
 	// ShipyardNew
@@ -1307,7 +1307,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("ShipType"));
 		ui->textEdit->append("ShipyardNew, ShipType: " + value.toString());
 		value = sett2.value(QString("NewShipID"));
-		ui->textEdit->append("-> NewShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> NewShipID: " + value.toVariant().toString());
 	}
 
 	// ShipyardSell
@@ -1316,9 +1316,9 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("ShipType"));
 		ui->textEdit->append("ShipyardSell, ShipType: " + value.toString());
 		value = sett2.value(QString("SellShipID"));
-		ui->textEdit->append("-> SellShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("ShipPrice"));
-		ui->textEdit->append("-> ShipPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("System"));
 		ui->textEdit->append("-> System: " + value.toString());
 	}
@@ -1329,11 +1329,11 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("ShipType"));
 		ui->textEdit->append("ShipyardSwap, ShipType: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("StoreOldShip"));
 		ui->textEdit->append("-> StoreOldShip: " + value.toString());
 		value = sett2.value(QString("StoreShipID"));
-		ui->textEdit->append("-> StoreShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> StoreShipID: " + value.toVariant().toString());
 	}
 
 	// ShipyardTransfer
@@ -1342,13 +1342,13 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("ShipType"));
 		ui->textEdit->append("ShipyardTransfer, ShipType: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 		value = sett2.value(QString("System"));
 		ui->textEdit->append("-> System: " + value.toString());
 		value = sett2.value(QString("Distance"));
-		ui->textEdit->append("-> Distance: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Distance: " + value.toVariant().toString());
 		value = sett2.value(QString("TransferPrice"));
-		ui->textEdit->append("-> TransferPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> TransferPrice: " + value.toVariant().toString());
 	}
 
 	// FetchRemoteModule
@@ -1361,11 +1361,11 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("StoredItem_Localised"));
 		ui->textEdit->append("-> StoredItem_Localised: " + value.toString());
 		value = sett2.value(QString("ServerId"));
-		ui->textEdit->append("-> ServerId: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ServerId: " + value.toVariant().toString());
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// ModuleBuy
@@ -1378,17 +1378,17 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("SellItem_Localised"));
 		ui->textEdit->append("-> SellItem_Localised: " + value.toString());
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("BuyItem"));
 		ui->textEdit->append("-> BuyItem: " + value.toString());
 		value = sett2.value(QString("BuyItem_Localised"));
 		ui->textEdit->append("-> BuyItem_Localised: " + value.toString());
 		value = sett2.value(QString("BuyPrice"));
-		ui->textEdit->append("-> BuyPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> BuyPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// ModuleSell
@@ -1401,11 +1401,11 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("SellItem_Localised"));
 		ui->textEdit->append("-> SellItem_Localised: " + value.toString());
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// ModuleSwap
@@ -1426,7 +1426,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// ModuleSellRemote
@@ -1439,13 +1439,13 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("SellItem_Localised"));
 		ui->textEdit->append("-> SellItem_Localised: " + value.toString());
 		value = sett2.value(QString("ServerId"));
-		ui->textEdit->append("-> ServerId: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ServerId: " + value.toVariant().toString());
 		value = sett2.value(QString("SellPrice"));
-		ui->textEdit->append("-> SellPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> SellPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));
-		ui->textEdit->append("-> ShipID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> ShipID: " + value.toVariant().toString());
 	}
 
 	// EngineerProgress
@@ -1467,7 +1467,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Blueprint"));
 		ui->textEdit->append("-> Blueprint: " + value.toString());
 		value = sett2.value(QString("Level"));
-		ui->textEdit->append("-> Level: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Level: " + value.toVariant().toString());
 		value = sett2.value(QString("Override"));
 		ui->textEdit->append("-> Override: " + value.toString());
 	}
@@ -1480,7 +1480,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Blueprint"));
 		ui->textEdit->append("-> Blueprint: " + value.toString());
 		value = sett2.value(QString("Level"));
-		ui->textEdit->append("-> Level: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Level: " + value.toVariant().toString());
 		// Ingredients is an array
 	}
 
@@ -1499,7 +1499,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Type"));
 		ui->textEdit->append("EjectCargo, Type: " + value.toString());
 		value = sett2.value(QString("Count"));
-		ui->textEdit->append("-> Count: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Count: " + value.toVariant().toString());
 		value = sett2.value(QString("Abandoned"));
 		ui->textEdit->append("-> Abandoned: " + QString::number(value.toBool()));
 	}
@@ -1508,7 +1508,7 @@ this is old code, please fix with new journal:
 	if (!value.toString().compare("RepairAll", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("RepairAll, Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("RepairAll, Cost: " + value.toVariant().toString());
 
 		// current credits
 		credits = (credits - value.toVariant().toInt());
@@ -1522,7 +1522,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Item_Localised"));
 		ui->textEdit->append("-> Item_Localised: " + value.toString());
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("-> Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Cost: " + value.toVariant().toString());
 
 		// current credits
 		credits = (credits - value.toVariant().toInt());
@@ -1544,9 +1544,9 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Type"));
 		ui->textEdit->append("RedeemVoucher, Type: " + value.toString());
 		value = sett2.value(QString("Amount"));
-		ui->textEdit->append("-> Amount: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Amount: " + value.toVariant().toString());
 		value = sett2.value(QString("BrokerPercentage"));
-		ui->textEdit->append("-> BrokerPercentage: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> BrokerPercentage: " + value.toVariant().toString());
 	}
 
 	// MiningRefined
@@ -1566,25 +1566,25 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Name"));
 		ui->textEdit->append("-> Name: " + value.toString());
 		value = sett2.value(QString("DiscoveryNumber"));
-		ui->textEdit->append("-> DiscoveryNumber: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> DiscoveryNumber: " + value.toVariant().toString());
 	}
 
 	// Touchdown
 	if (!value.toString().compare("Touchdown", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Latitude"));
-		ui->textEdit->append("Touchdown, Latitude: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("Touchdown, Latitude: " + value.toVariant().toString());
 		value = sett2.value(QString("Longitude"));
-		ui->textEdit->append("-> Longitude: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Longitude: " + value.toVariant().toString());
 	}
 
 	// Liftoff
 	if (!value.toString().compare("Liftoff", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Latitude"));
-		ui->textEdit->append("Liftoff, Latitude: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("Liftoff, Latitude: " + value.toVariant().toString());
 		value = sett2.value(QString("Longitude"));
-		ui->textEdit->append("-> Longitude: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Longitude: " + value.toVariant().toString());
 	}
 
 	// BuyDrones
@@ -1593,11 +1593,11 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Type"));
 		ui->textEdit->append("BuyDrones, Type: " + value.toString());
 		value = sett2.value(QString("Count"));
-		ui->textEdit->append("-> Count: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Count: " + value.toVariant().toString());
 		value = sett2.value(QString("BuyPrice"));
-		ui->textEdit->append("-> BuyPrice: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> BuyPrice: " + value.toVariant().toString());
 		value = sett2.value(QString("TotalCost"));
-		ui->textEdit->append("-> TotalCost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> TotalCost: " + value.toVariant().toString());
 	}
 
 	// Interdicted
@@ -1635,14 +1635,14 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("IsPlayer"));
 		ui->textEdit->append("-> IsPlayer: " + QString::number(value.toBool()));
 		value = sett2.value(QString("CombatRank"));
-		ui->textEdit->append("-> CombatRank: " + QString::number(value.toVariant().toFloat());
+		ui->textEdit->append("-> CombatRank: " + value.toVariant().toString());
 	}
 */
 	// FactionKillBond
 	if (!value.toString().compare("FactionKillBond", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Reward"));
-		ui->textEdit->append("FactionKillBond, Reward: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("FactionKillBond, Reward: " + value.toVariant().toString());
 		value = sett2.value(QString("AwardingFaction"));
 		ui->textEdit->append("-> AwardingFaction: " + value.toString());
 		value = sett2.value(QString("VictimFaction"));
@@ -1679,7 +1679,7 @@ this is old code, please fix with new journal:
 	if (!value.toString().compare("HullDamage", Qt::CaseInsensitive))
 	{
 		value = sett2.value(QString("Health"));
-		ui->textEdit->append("HullDamage, Health: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("HullDamage, Health: " + value.toVariant().toString());
 	}
 
 	// ShieldState
@@ -1695,7 +1695,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Option"));
 		ui->textEdit->append("Resurrect, Option: " + value.toString());
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("-> Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Cost: " + value.toVariant().toString());
 		value = sett2.value(QString("Bankrupt"));
 		ui->textEdit->append("-> Bankrupt: " + QString::number(value.toBool()));
 	}
@@ -1708,9 +1708,9 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Loadout"));
 		ui->textEdit->append("-> Loadout: " + value.toString());
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("-> Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Cost: " + value.toVariant().toString());
 		value = sett2.value(QString("Count"));
-		ui->textEdit->append("-> Count: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Count: " + value.toVariant().toString());
 	}
 
 	// CrewHire
@@ -1721,9 +1721,9 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Faction"));
 		ui->textEdit->append("-> Faction: " + value.toString());
 		value = sett2.value(QString("Cost"));
-		ui->textEdit->append("-> Cost: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Cost: " + value.toVariant().toString());
 		value = sett2.value(QString("CombatRank"));
-		ui->textEdit->append("-> CombatRank: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> CombatRank: " + value.toVariant().toString());
 	}
 
 	// CrewAssign
@@ -1765,7 +1765,7 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Expiry"));
 		ui->textEdit->append("-> Expiry: " + value.toString());
 		value = sett2.value(QString("MissionID"));
-		ui->textEdit->append("-> MissionID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> MissionID: " + value.toVariant().toString());
 	}
 
 	// MissionCompleted
@@ -1776,13 +1776,13 @@ this is old code, please fix with new journal:
 		value = sett2.value(QString("Name"));
 		ui->textEdit->append("-> Name: " + value.toString());
 		value = sett2.value(QString("MissionID"));
-		ui->textEdit->append("-> MissionID: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> MissionID: " + value.toVariant().toString());
 		value = sett2.value(QString("DestinationSystem"));
 		ui->textEdit->append("-> DestinationSystem: " + value.toString());
 		value = sett2.value(QString("DestinationStation"));
 		ui->textEdit->append("-> DestinationStation: " + value.toString());
 		value = sett2.value(QString("Reward"));
-		ui->textEdit->append("-> Reward: " + QString::number(value.toVariant().toFloat()));
+		ui->textEdit->append("-> Reward: " + value.toVariant().toString());
 	}
 }
 
@@ -2047,7 +2047,7 @@ void MainWindow::on_pushButton_UTCArrivedAtSystem_clicked()
 }
 
 
-void MainWindow::addSpecialPlanets(QString planetClass, QString bodyname, float distanceLS, float radius)
+void MainWindow::addSpecialPlanets(QString planetClass, QString bodyname, double distanceLS, double radius)
 {
 	// if we have special planet we write it to specific txt file
 
@@ -2085,4 +2085,14 @@ void MainWindow::addSpecialPlanets(QString planetClass, QString bodyname, float 
 
 	// update GUI as we have new special planets counts to list
 	updateSystemsVisited();
+}
+
+void MainWindow::on_actionDiscord_Paste_triggered()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	QString myPaste = timeUTCtoString() + " Elite Log session systems visited (FSD jumps): " + QString::number(numSessionSystems) + " traveled distance: " + QString::number(sessionJumpDist) + "Ly";
+	myPaste.append(", special planets ammonia: " + QString::number(numSessionAmmonia) + ", earthlike: " + QString::number(numSessionEarth) + ", water: " + QString::number(numSessionWater));
+	myPaste.append(", planets smallest: " + QString::number(sessionPlanetSmallest) + "km, largest: " + QString::number(sessionPlanetLargest) + "km");
+	myPaste.append(", detail surface scans: " + QString::number(numSessionScans));
+	clipboard->setText(myPaste);
 }

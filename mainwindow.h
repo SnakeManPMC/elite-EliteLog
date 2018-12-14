@@ -37,18 +37,18 @@ private:
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
 	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater,credits;
-	float scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
-	float planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
-	float landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
-	float stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
-	float age_MYyoungest,age_MYoldest,fuelLevelLowest,sessionPlanetSmallest,sessionPlanetLargest,sessionJumpDist;
+	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
+	double planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
+	double landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
+	double stellarMassLowest,stellarMassHighest,stellarRadiusSmallest,stellarRadiusLargest;
+	double age_MYyoungest,age_MYoldest,fuelLevelLowest,sessionPlanetSmallest,sessionPlanetLargest,sessionJumpDist;
 	qint64 sizeOfLog,sizeOfOldLog,filePos;
 	QString logDirectory,eliteLogVersion,cmdrLogFileName,numSessionSystemsRecordDate;
 
 	void setupTableWidget();
 	void updateTableView(const QString& date, const QString& event, const QString& details);
 	QString ttime, tevent, tdetails;
-	void addSpecialPlanets(QString planetClass, QString bodyname, float distancels, float radius);
+	void addSpecialPlanets(QString planetClass, QString bodyname, double distancels, double radius);
 
 protected:
 	void timerEvent(QTimerEvent *event);
@@ -58,6 +58,7 @@ private slots:
 	void on_pushButton_3_clicked();
 	void on_pushButton_UTCArrivedAtSystem_clicked();
 	void on_pushButton_CreditsToClipboard_clicked();
+	void on_actionDiscord_Paste_triggered();
 };
 
 #endif // MAINWINDOW_H
