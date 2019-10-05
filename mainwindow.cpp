@@ -632,9 +632,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		tdetails = (MyStation + " at " + MySystem);
 		updateTableView(ttime, tevent, tdetails);
 
-		// UI session stations visited text label
+		// session stations visited int and GUI text label
 		numSessionStations++;
 		ui->SessionStations->setText("Session Stations Visited: " + QString::number(numSessionStations));
+		stationVisitLogger();
 	}
 
 	// Undocked
@@ -2150,4 +2151,20 @@ void MainWindow::on_pushButton_TD_SystemStation_clicked()
 	TDStation = MyStation.replace(" ", "");
 	TDStation.replace("-", "");
 	clipboard->setText(TDSystem + "/" + TDStation);
+}
+
+
+void MainWindow::stationVisitLogger()
+{
+	QFile stationsFile("stations_visited.log");
+
+	if (!stationsFile.open(QIODevice::Append))
+	{
+		QMessageBox::information(this, tr("Unable to open stations_visited.log file file for writing"),
+		stationsFile.errorString());
+		return;
+	}
+
+	QTextStream in(&stationsFile);
+	in << timeUTCtoString() << " Docked at " << MySystem << "/" << MyStation << ".\n";
 }

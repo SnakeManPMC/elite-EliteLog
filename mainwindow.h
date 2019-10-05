@@ -49,6 +49,7 @@ private:
 	void updateTableView(const QString& date, const QString& event, const QString& details);
 	QString ttime, tevent, tdetails;
 	void addSpecialPlanets(QString planetClass, QString bodyname, double distancels, double radius);
+	void stationVisitLogger();
 
 protected:
 	void timerEvent(QTimerEvent *event);
