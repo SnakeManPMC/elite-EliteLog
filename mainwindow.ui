@@ -103,6 +103,13 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="SessionStations">
+      <property name="text">
+       <string>Session Stations Visited: xxx</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="Deaths">
       <property name="text">
        <string>CMDR Deaths: -</string>

@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.9";
+	eliteLogVersion = "v1.2.10";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	numSessionAmmonia = 0;
 	numSessionEarth = 0;
 	numSessionWater = 0;
+	numSessionStations = 0;
 	numAllSystems = 0;
 	sessionPlanetLargest = 0;
 	sessionPlanetSmallest = 9999999;
@@ -630,6 +631,10 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		tevent = "Docked to Station";
 		tdetails = (MyStation + " at " + MySystem);
 		updateTableView(ttime, tevent, tdetails);
+
+		// UI session stations visited text label
+		numSessionStations++;
+		ui->SessionStations->setText("Session Stations Visited: " + QString::number(numSessionStations));
 	}
 
 	// Undocked
@@ -2129,6 +2134,7 @@ void MainWindow::on_actionDiscord_Paste_triggered()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	QString myPaste = timeUTCtoString() + " Elite Log session systems visited (FSD jumps): " + QString::number(numSessionSystems) + " traveled distance: " + QString::number(sessionJumpDist) + "Ly";
+	if (numSessionStations > 0) myPaste.append(", stations visited: " + QString::number(numSessionStations));
 	myPaste.append(", special planets ammonia: " + QString::number(numSessionAmmonia) + ", earthlike: " + QString::number(numSessionEarth) + ", water: " + QString::number(numSessionWater));
 	myPaste.append(", planets smallest: " + QString::number(sessionPlanetSmallest / 1000) + "km, largest: " + QString::number(sessionPlanetLargest / 1000) + "km");
 	myPaste.append(", detail surface scans: " + QString::number(numSessionScans));

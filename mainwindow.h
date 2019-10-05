@@ -36,7 +36,7 @@ private:
 	int timerId,cargoValue,lastTrade,sessionTrades;
 	bool fileChangedOrNot(QString elite_file);
 	QDateTime created,oldfiletime;
-	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater,credits;
+	int savedHammers,numSessionSystems,numSessionSystemsRecord,numAllSystems,deaths,numSessionScans,numSessionAmmonia,numSessionEarth,numSessionWater,numSessionStations,credits;
 	double scoopedTotal,JumpDistShortest,JumpDistLongest,DistanceFromArrivalLSMin,DistanceFromArrivalLSMax;
 	double planetRadiusSmallest,planetRadiusLargest,surfaceGravityLowest,surfaceGravityHighest;
 	double landableRadiusSmallest,landableRadiusLargest,landableGravityLowest,landableGravityHighest;
