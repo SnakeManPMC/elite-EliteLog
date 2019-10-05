@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.10";
+	eliteLogVersion = "v1.2.11";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -2139,4 +2139,15 @@ void MainWindow::on_actionDiscord_Paste_triggered()
 	myPaste.append(", planets smallest: " + QString::number(sessionPlanetSmallest / 1000) + "km, largest: " + QString::number(sessionPlanetLargest / 1000) + "km");
 	myPaste.append(", detail surface scans: " + QString::number(numSessionScans));
 	clipboard->setText(myPaste);
+}
+
+void MainWindow::on_pushButton_TD_SystemStation_clicked()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	QString TDSystem,TDStation;
+	TDSystem = MySystem.replace(" ", "");
+	TDSystem.replace("-", "");
+	TDStation = MyStation.replace(" ", "");
+	TDStation.replace("-", "");
+	clipboard->setText(TDSystem + "/" + TDStation);
 }

@@ -59,6 +59,7 @@ private slots:
 	void on_pushButton_UTCArrivedAtSystem_clicked();
 	void on_pushButton_CreditsToClipboard_clicked();
 	void on_actionDiscord_Paste_triggered();
+	void on_pushButton_TD_SystemStation_clicked();
 };
 
 #endif // MAINWINDOW_H
