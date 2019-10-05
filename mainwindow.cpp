@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.6";
+	eliteLogVersion = "v1.2.9";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -107,47 +107,51 @@ void MainWindow::readEliteCFG()
 
 	QTextStream in(&file);
 
-	// log directory path
+	//1 log directory path
 	logDirectory = in.readLine();
 
-	// highest session jump record + date
+	//2 highest session jump record + date
 	QString tmp = in.readLine();
 	QStringList parsed = tmp.split(",");
 	bool ok;
 	numSessionSystemsRecord = parsed[0].toInt(&ok, 10);
 	numSessionSystemsRecordDate = parsed[1];
 
-	// CMDR deaths
+	//3 CMDR deaths
 	tmp = in.readLine();
 	deaths = tmp.toInt(&ok, 10);
 
-	// Fuel scooped total
+	//4 Fuel scooped total
 	tmp = in.readLine();
 	scoopedTotal = tmp.toDouble(&ok);
 
-	// jump distance shortest
+	//5 jump distance shortest
 	tmp = in.readLine();
 	JumpDistShortest = tmp.toDouble(&ok);
 
-	// jump distance longest
+	//6 jump distance longest
 	tmp = in.readLine();
 	JumpDistLongest = tmp.toDouble(&ok);
 
-	// LS distance shortest
+	//7 LS distance shortest
 	tmp = in.readLine();
 	DistanceFromArrivalLSMin = tmp.toDouble(&ok);
 
-	// LS distance longest
+	//8 LS distance longest
 	tmp = in.readLine();
 	DistanceFromArrivalLSMax = tmp.toDouble(&ok);
 
-	// planet radius smallest
+	//9 planet radius smallest
 	tmp = in.readLine();
+	qDebug() << "elitelog.cfg read, tmp readline for line 9, planet radius smallest: " << tmp;
 	planetRadiusSmallest = tmp.toDouble(&ok);
 
-	// planet radius largest
+	//10 planet radius largest
 	tmp = in.readLine();
+	qDebug() << "elitelog.cfg read, tmp readline for line 10, planet radius largest: " << tmp;
 	planetRadiusLargest = tmp.toDouble(&ok);
+	qDebug() << "elitelog.cfg read, double planetRadiusSmallest: " << planetRadiusSmallest;
+	qDebug() << "elitelog.cfg read, double planetRadiusLargest: " << planetRadiusLargest;
 
 	// planet surface gravity lowest
 	tmp = in.readLine();
@@ -453,6 +457,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		// empty previous systems scanned bodies qstringlist
 		sessionScanBodies.clear();
+		ui->CurSysSpecial->clear();
 
 		// StarPos is array
 		// "StarPos":[195.406,281.469,5.500]
@@ -514,7 +519,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 		}
 
 		JumpDist = value.toVariant().toString();
-		sessionJumpDist = sessionJumpDist + value.toVariant().toDouble();
+		double tmpJumpDist = value.toVariant().toDouble();
+		sessionJumpDist = (sessionJumpDist + tmpJumpDist);
 		ui->JumpDistanceLast->setText("Last jump distance: " + JumpDist + ", Session Distance: " + QString::number(sessionJumpDist));
 
 		value = sett2.value(QString("FuelUsed"));
@@ -792,7 +798,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (DistanceFromArrivalLSMin > pmcDistanceLS)
 			{
 				DistanceFromArrivalLSMin = pmcDistanceLS;
-				ui->textEdit->append("New DistanceFromArrivalLSMin highscore! " + QString::number(DistanceFromArrivalLSMin));
+				QString tmpDistArrMinHighScore = "New DistanceFromArrivalLSMin highscore! " + QString::number(DistanceFromArrivalLSMin) + " Ls, " + pmcBodyName;
+				ui->textEdit->append(tmpDistArrMinHighScore);
+				ui->CurSysSpecial->append(tmpDistArrMinHighScore);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -800,7 +808,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (DistanceFromArrivalLSMax < pmcDistanceLS)
 			{
 				DistanceFromArrivalLSMax = pmcDistanceLS;
-				ui->textEdit->append("New DistanceFromArrivalLSMax highscore! " + QString::number(DistanceFromArrivalLSMax));
+				QString tmpDistArrMaxHighScore = "New DistanceFromArrivalLSMax highscore! " + QString::number(DistanceFromArrivalLSMax) + " Ls, " + pmcBodyName;
+				ui->textEdit->append(tmpDistArrMaxHighScore);
+				ui->CurSysSpecial->append(tmpDistArrMaxHighScore);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -819,6 +829,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (value.toString().size() > 0)
 			{
 				tdetails.append(", " + value.toString());
+				ui->CurSysSpecial->append("Terraformable " + pmcBodyName);
 			}
 
 			ui->textEdit->append("PlanetClass: " + pmcPlanetClass);
@@ -852,7 +863,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (planetRadiusSmallest > pmcRadius)
 			{
 				planetRadiusSmallest = pmcRadius;
-				ui->textEdit->append("New highscore planet radius SMALLEST! " + QString::number(planetRadiusSmallest / 1000));
+				QString tmpRadiusSmallest = "New highscore planet radius SMALLEST! " + QString::number(planetRadiusSmallest / 1000) + " km, " + pmcBodyName;
+				ui->textEdit->append(tmpRadiusSmallest);
+				ui->CurSysSpecial->append(tmpRadiusSmallest);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -860,11 +873,13 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (planetRadiusLargest < pmcRadius)
 			{
 				planetRadiusLargest = pmcRadius;
-				ui->textEdit->append("New highscore planet radius LARGEST! " + QString::number(planetRadiusLargest / 1000));
+				QString tmpRadiusLargest = "New highscore planet radius LARGEST! " + QString::number(planetRadiusLargest / 1000) + " km, " + pmcBodyName;
+				ui->textEdit->append(tmpRadiusLargest);
+				ui->CurSysSpecial->append(tmpRadiusLargest);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
-			ui->textEdit->append("Radius: " + QString::number(pmcRadius));
+			ui->textEdit->append("Radius (raw, no /1000 here): " + QString::number(pmcRadius));
 
 			// same as above but only for current session
 			if (sessionPlanetSmallest > pmcRadius)
@@ -884,7 +899,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityLowest > value.toVariant().toDouble())
 			{
 				surfaceGravityLowest = value.toVariant().toDouble();
-				ui->textEdit->append("New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 9.80665));
+				QString tmpSurfaceGravityLowest = "New highscore planet surface gravity LOWEST: " + QString::number(surfaceGravityLowest / 9.80665) + " G, " + pmcBodyName;
+				ui->textEdit->append(tmpSurfaceGravityLowest);
+				ui->CurSysSpecial->append(tmpSurfaceGravityLowest);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -892,7 +909,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 			if (surfaceGravityHighest < value.toVariant().toDouble())
 			{
 				surfaceGravityHighest = value.toVariant().toDouble();
-				ui->textEdit->append("New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 9.80665));
+				QString tmpSurfaceGravityHighest = "New highscore planet surface gravity HIGHEST: " + QString::number(surfaceGravityHighest / 9.80665) + " G, " + pmcBodyName;
+				ui->textEdit->append(tmpSurfaceGravityHighest);
+				ui->CurSysSpecial->append(tmpSurfaceGravityHighest);
 				updateSystemsVisited();
 				saveEliteCFG();
 			}
@@ -914,11 +933,22 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				// we have landabale planet
 				// do some highscores specifically for landables, ie smallest, largest radius
 				value = sett2.value(QString("Radius"));
+				if ((value.toVariant().toDouble() / 1000) < 250)
+				{
+					ui->CurSysSpecial->append("Small < 250 km planet " + pmcBodyName);
+				}
+				if ((value.toVariant().toDouble() / 1000) > 15000)
+				{
+					ui->CurSysSpecial->append("Large > 15,000 km planet " + pmcBodyName);
+				}
+
 				// planet radius smallest highscore
 				if (landableRadiusSmallest > value.toVariant().toDouble())
 				{
 					landableRadiusSmallest = value.toVariant().toDouble();
-					ui->textEdit->append("New highscore *landable* planet radius SMALLEST! " + QString::number(landableRadiusSmallest / 1000));
+					QString tmpLandableRadiusSmallest = "New highscore *landable* planet radius SMALLEST! " + QString::number(landableRadiusSmallest / 1000) + " km, " + pmcBodyName;
+					ui->textEdit->append(tmpLandableRadiusSmallest);
+					ui->CurSysSpecial->append(tmpLandableRadiusSmallest);
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
@@ -926,7 +956,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				if (landableRadiusLargest < value.toVariant().toDouble())
 				{
 					landableRadiusLargest = value.toVariant().toDouble();
-					ui->textEdit->append("New highscore *landable* planet radius LARGEST! " + QString::number(landableRadiusLargest / 1000));
+					QString tmpLandableRadiusLargest = "New highscore *landable* planet radius LARGEST! " + QString::number(landableRadiusLargest / 1000) + " km, " + pmcBodyName;
+					ui->textEdit->append(tmpLandableRadiusLargest);
+					ui->CurSysSpecial->append(tmpLandableRadiusLargest);
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
@@ -936,7 +968,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				if (landableGravityLowest > value.toVariant().toDouble())
 				{
 					landableGravityLowest = value.toVariant().toDouble();
-					ui->textEdit->append("New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 9.80665));
+					QString tmpLandableGravityLowest = "New highscore *landable* planet surface gravity LOWEST: " + QString::number(landableGravityLowest / 9.80665) + " G, " + pmcBodyName;
+					ui->textEdit->append(tmpLandableGravityLowest);
+					ui->CurSysSpecial->append(tmpLandableGravityLowest);
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
@@ -944,7 +978,9 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 				if (landableGravityHighest < value.toVariant().toDouble())
 				{
 					landableGravityHighest = value.toVariant().toDouble();
-					ui->textEdit->append("New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 9.80665));
+					QString tmpLandableGravityHighest = "New highscore *landable* planet surface gravity HIGHEST: " + QString::number(landableGravityHighest / 9.80665) + " G, " + pmcBodyName;
+					ui->textEdit->append(tmpLandableGravityHighest);
+					ui->CurSysSpecial->append(tmpLandableGravityHighest);
 					updateSystemsVisited();
 					saveEliteCFG();
 				}
@@ -2082,6 +2118,8 @@ void MainWindow::addSpecialPlanets(QString planetClass, QString bodyname, double
 
 	in << timeUTCtoString() << "," << bodyname << "," << QString::number(distanceLS) << "," << QString::number(radius / 1000) << "\n";
 	planetsFile.close();
+
+	ui->CurSysSpecial->append("Surface Mapping PMCTODO: " + planetClass + ": " + bodyname);
 
 	// update GUI as we have new special planets counts to list
 	updateSystemsVisited();
