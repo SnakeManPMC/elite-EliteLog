@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.11";
+	eliteLogVersion = "v1.2.13";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -521,7 +521,8 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 
 		JumpDist = value.toVariant().toString();
 		double tmpJumpDist = value.toVariant().toDouble();
-		sessionJumpDist = (sessionJumpDist + tmpJumpDist);
+		double tmpSessionJumpDist = (sessionJumpDist + tmpJumpDist);
+		sessionJumpDist = tmpSessionJumpDist;
 		ui->JumpDistanceLast->setText("Last jump distance: " + JumpDist + ", Session Distance: " + QString::number(sessionJumpDist));
 
 		value = sett2.value(QString("FuelUsed"));
