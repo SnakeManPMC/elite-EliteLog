@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	setupTableWidget();
 
 	// our softwares version
-	eliteLogVersion = "v1.2.13";
+	eliteLogVersion = "v1.2.14";
 	setWindowTitle("Elite Log " + eliteLogVersion + " by PMC");
 
 	// initialize some variables
@@ -398,6 +398,7 @@ void MainWindow::parseSystemsJSON(QByteArray line)
 	{
 		value = sett2.value(QString("Commander"));
 		ui->textEdit->append("LoadGame, Commander: " + value.toString());
+		ui->CMDRName->setText("CMDR: <b>" + value.toString() + "</b>");
 		value = sett2.value(QString("Ship"));
 		ui->textEdit->append("-> Ship: " + value.toString());
 		value = sett2.value(QString("ShipID"));

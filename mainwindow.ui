@@ -26,6 +26,13 @@
      </layout>
     </item>
     <item>
+     <widget class="QLabel" name="CMDRName">
+      <property name="text">
+       <string>CMDR: -</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="SessionSystemVisits">
       <property name="text">
        <string>Session systems: xxx</string>
